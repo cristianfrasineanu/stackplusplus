@@ -18,7 +18,7 @@ void main()
 			{
 				cout << " >";
 
-				console.setLastInput(getch());
+				console.setLastInput(_getch());
 				cout << console.getLastInput()
 					<< endl;
 			}
@@ -32,9 +32,9 @@ void main()
 
 				// Clear the keyboard buffer during the sleep cycle (if there are any keys pressed), 
 				// so as long as the keyboard is hit during that period the input won't be taken into consideration.
-				while (kbhit())
+				while (_kbhit())
 				{
-					getch();
+					_getch();
 				}
 
 				console.reloadView();
