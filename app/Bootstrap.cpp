@@ -31,7 +31,7 @@ void main()
 				Sleep(console.getDelay());
 
 				// Clear the keyboard buffer during the sleep cycle (if there are any keys pressed), 
-				// so as long as the keyboard is hit during that period the input won't be taken into consideration.
+				// so as long as the keyboard is hit during that period, the input won't be taken into consideration.
 				while (_kbhit())
 				{
 					_getch();

@@ -36,6 +36,31 @@ unsigned User::getUuid()
 	return this->uuid;
 }
 
+//---View---
+//----------
+View::View(char *viewName, vector<char> availableOptions, bool hasInterpolation)
+{
+	this->viewName = new char[strlen(viewName) + 1];
+	strcpy(this->viewName, viewName);
+	this->availableOptions = availableOptions;
+	this->hasInterpolation = hasInterpolation;
+}
+
+vector<char> View::getAvailableOptions()
+{
+	return this->availableOptions;
+}
+
+char *View::getViewName()
+{
+	return this->viewName;
+}
+
+View::~View()
+{
+	delete[] this->viewName;
+}
+
 //---Console---
 //-------------
 // We need an initial state, because we don't have any means like mapping views to HTTP routes
@@ -46,21 +71,19 @@ Console::Console()
 {
 	this->mode = new char[strlen("live") + 1];
 	strcpy(this->mode, "live");
-	this->currentView = new char[strlen(Console::initialView) + 1];
-	strcpy(this->currentView, Console::initialView);
-	this->availableOptions = { '1', '2', '3', '4', '5', 'q' };
+	this->currentView = new View(Console::initialView, { '1', '2', '3', '4', '5', 'q' }, false);
 	this->delay = 2000;
 
 	this->loadViews(Console::viewsFolder);
 
-	if (find(this->loadedViews.begin(), this->loadedViews.end(), this->currentView) != this->loadedViews.end())
+	if (find(this->loadedViews.begin(), this->loadedViews.end(), this->currentView->getViewName()) != this->loadedViews.end())
 	{
-		this->renderView(this->currentView);
+		this->renderView(*this->currentView);
 	}
 	else
 	{
 		string exceptionIntro = "Please specify an existing view (";
-		throw invalid_argument(exceptionIntro + this->currentView + ")");
+		throw invalid_argument(exceptionIntro + this->currentView->getViewName() + ")");
 	}
 }
 
@@ -68,29 +91,29 @@ Console::Console(char *mode)
 {
 	this->mode = new char[strlen("debug") + 1];
 	strcpy(this->mode, "debug");
-	this->currentView = new char[strlen("debug.view") + 1];
-	strcpy(this->currentView, "debug.view");
+	this->currentView = new View("debug.view", { 'q' }, true);
 
 	this->loadViews(Console::viewsFolder);
 
-	if (find(this->loadedViews.begin(), this->loadedViews.end(), this->currentView) != this->loadedViews.end())
+	if (find(this->loadedViews.begin(), this->loadedViews.end(), this->currentView->getViewName()) != this->loadedViews.end())
 	{
-		this->renderView(this->currentView);
+		this->renderView(*this->currentView);
 	}
 	else
 	{
 		string exceptionIntro = "No debug view found: ";
-		throw invalid_argument(exceptionIntro + this->currentView);
+		throw invalid_argument(exceptionIntro + *this->currentView->getViewName());
 	}
 }
 
 void Console::setLastInput(char input)
 {
-	if (isInCharVector(this->availableOptions, input))
+	if (isInCharVector(this->currentView->getAvailableOptions(), input))
 	{
 		this->lastInput = input;
 	}
-	else {
+	else
+	{
 		throw invalid_argument("Please provide a valid selection.");
 	}
 }
@@ -102,10 +125,10 @@ char Console::getLastInput()
 
 void Console::loadViews(const fs::path &viewsFolder)
 {
-	if (!fs::exists(viewsFolder) 
+	if (!fs::exists(viewsFolder)
 		|| !fs::is_directory(viewsFolder))
 	{
-		throw invalid_argument("Received an invalid directory: \"" + viewsFolder.string()+ "\"");
+		throw invalid_argument("Received an invalid directory: \"" + viewsFolder.string() + "\"");
 	}
 
 	fs::recursive_directory_iterator it(viewsFolder);
@@ -122,11 +145,11 @@ void Console::loadViews(const fs::path &viewsFolder)
 	}
 }
 
-void Console::renderView(char *view)
+void Console::renderView(View &view)
 {
 	string content;
 	string path = Console::viewsFolder;
-	path.append("\\").append(view);
+	path.append("\\").append(view.getViewName());
 	stringstream buffer;
 	ifstream viewFile(path, ios::out);
 
@@ -144,7 +167,7 @@ void Console::renderView(char *view)
 void Console::reloadView()
 {
 	system("cls");
-	this->renderView(this->currentView);
+	this->renderView(*this->currentView);
 }
 
 unsigned Console::getDelay()
@@ -154,11 +177,10 @@ unsigned Console::getDelay()
 
 Console::~Console()
 {
-	delete[] this->currentView;
+	delete this->currentView;
 	delete[] this->mode;
 
 	system("cls");
 	cout << "Program exited successfully..."
 		<< endl;
 }
-

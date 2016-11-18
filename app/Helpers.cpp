@@ -3,12 +3,6 @@
 
 #include "Helpers.h"
 
-
-unsigned getLastUuid()
-{
-	return 40;
-}
-
 bool isInCharVector(vector<char> haystack, char needle)
 {
 	return find(haystack.begin(), haystack.end(), needle) != haystack.end();

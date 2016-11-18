@@ -4,17 +4,29 @@
 using namespace std;
 namespace fs = std::experimental::filesystem::v1;
 
+class View {
+private:
+	char *viewName;
+	bool hasInterpolation;
+	vector<char> availableOptions;
+	View();
+public:
+	View(char *, vector<char>, bool);
+	vector<char> getAvailableOptions();
+	char *getViewName();
+	~View();
+};
+
 class Console {
 private:
 	static char *initialView;
 	static char *viewsFolder;
-	char *currentView;
+	View *currentView;
 	char *mode;
 	char lastInput;
 	unsigned delay;
 
 	vector<fs::path> loadedViews;
-	vector<char> availableOptions;
 
 	void loadViews(const fs::path &);
 public:
@@ -23,7 +35,7 @@ public:
 
 	char getLastInput();
 	void setLastInput(char);
-	void renderView(char *);
+	void renderView(View &);
 	void reloadView();
 	unsigned getDelay();
 
