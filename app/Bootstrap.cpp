@@ -11,7 +11,7 @@ void main()
 	try
 	{
 		Console console;
-
+		View::loadViewsOptions();
 		do
 		{
 			try

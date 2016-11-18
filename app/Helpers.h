@@ -3,6 +3,7 @@
 
 using namespace std;
 
-bool isInCharVector(vector<char>, char);
-bool isInIntVector(vector<int>, int);
-bool isInStringVector(vector<string>, string);
+bool isInCharStringMap(const map<char, string> &, char);
+bool isInCharVector(const vector<char> &, char);
+bool isInIntVector(const vector<int> &, int);
+bool isInStringVector(const vector<string> &, string);

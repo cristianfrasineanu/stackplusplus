@@ -1,7 +1,13 @@
 #include <iostream>
 #include <vector>
+#include <map>
 
 #include "Helpers.h"
+
+bool isInCharStringMap(const map<char, string> &haystack, char needle)
+{
+	return haystack.find(needle) != haystack.end();
+}
 
 bool isInCharVector(vector<char> haystack, char needle)
 {

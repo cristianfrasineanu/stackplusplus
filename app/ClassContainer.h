@@ -1,31 +1,36 @@
 #include <iostream>
 #include <filesystem>
+#include <map>
 
 using namespace std;
 namespace fs = std::experimental::filesystem::v1;
 
 class View {
 private:
+	static map<string, map<char, string>> ViewsOptions;
 	char *viewName;
 	bool hasInterpolation;
-	vector<char> availableOptions;
+	map<char, string> availableOptions;
+
 	View();
 public:
-	View(char *, vector<char>, bool);
-	vector<char> getAvailableOptions();
+	View(string, map<char, string>, bool);
+
+	map<char, string> getAvailableOptions();
 	char *getViewName();
+	static void loadViewsOptions();
+
 	~View();
 };
 
 class Console {
 private:
-	static char *initialView;
+	static string initialView;
 	static char *viewsFolder;
-	View *currentView;
 	char *mode;
 	char lastInput;
 	unsigned delay;
-
+	View *currentView;
 	vector<fs::path> loadedViews;
 
 	void loadViews(const fs::path &);
@@ -36,6 +41,7 @@ public:
 	char getLastInput();
 	void setLastInput(char);
 	void renderView(View &);
+	void renderNextView();
 	void reloadView();
 	unsigned getDelay();
 
