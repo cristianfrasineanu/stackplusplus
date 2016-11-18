@@ -39,7 +39,7 @@ unsigned User::getUuid()
 
 //---View---
 //----------
-map<string, map<char, string>> View::ViewsOptions = {{ "", {{'\0', ""}} }};
+map<string, map<char, string>> View::ViewsOptions = { { "", {{'\0', ""}} } };
 
 View::View(string viewName, map<char, string> availableOptions, bool hasInterpolation)
 {
@@ -174,6 +174,10 @@ void Console::renderView(View &view)
 		cout << buffer.str()
 			<< endl;
 		buffer.clear();
+	}
+	else
+	{
+		throw system_error(error_code(500, system_category()), "The view stream couldn't be opened.");
 	}
 
 	viewFile.close();

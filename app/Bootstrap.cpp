@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include <conio.h>
 
+#include "Helpers.h"
 #include "ClassContainer.h"
 
 using namespace std;
@@ -21,6 +22,7 @@ void main()
 				console.setLastInput(_getch());
 				cout << console.getLastInput()
 					<< endl;
+				//console.renderNextView();
 			}
 			catch (const invalid_argument &e)
 			{
@@ -28,16 +30,16 @@ void main()
 					<< e.what()
 					<< endl;
 
-				Sleep(console.getDelay());
-
-				// Clear the keyboard buffer during the sleep cycle (if there are any keys pressed), 
-				// so as long as the keyboard is hit during that period, the input won't be taken into consideration.
-				while (_kbhit())
-				{
-					_getch();
-				}
+				sleepAndClearBuffer(console.getDelay());
 
 				console.reloadView();
+			}
+			catch (const system_error &e)
+			{
+				cout << e.code()
+					<< " "
+					<< e.what()
+					<< endl;
 			}
 		} while (console.getLastInput() != 'q');
 	}
@@ -46,5 +48,4 @@ void main()
 		cout << e.what()
 			<< endl;
 	}
-
 }
