@@ -4,19 +4,31 @@
 _\ \ || (_| | (__|   </ ___/| | |_| \__ \/ ___/| | |_| \__ \
 \__/\__\__,_|\___|_|\_\/    |_|\__,_|___/\/    |_|\__,_|___/
                                                             
-             |--------------------------|	   
-             |At least it's not COBOL...|
-             |--------------------------|
+~~~ FAQ ~~~
 
- ~~~ Make your choice:
+Q: Why does this even exist?
 
- -1- Login
- -2- Sign-up
- -3- Browse Questions as Guest
- -4- FAQ
- -5- Help
+Well, every programmer has to start with something... and deliver projects for University.
 
- *** Press -q- to quit or -b- to go to the previous menu. ***
+Q: Are you actually loading text views from files!?
+
+Yep.
+
+Q: Were you drunk when you coded this?
+
+I don't drink, fortunately.
+
+Q: At least are there any nice features?
+
+Well, there's some sort of rewarding system similar to the one from StackOverflow. You might like that.
+
+Q: Does it have validation at least?
+
+You bet it has.
+
+Q: Are you even serious?
+
+Serious as death.
 
 ===========================================================
 # (c) 2016 Cristian-Adrian Frasineanu | GNU GPLv3 licence #

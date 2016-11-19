@@ -11,37 +11,13 @@
 using namespace std;
 namespace fs = std::experimental::filesystem::v1;
 
-//--- User --- 
-//------------
-unsigned User::count = 0;
-
-void User::setFromLastUuid()
-{
-	// Get the last uuid from the db file
-
-	User::count = 30;
-}
-
-User::User() : uuid(User::count++)
-{
-	this->nick = new char[4];
-}
-
-User::~User()
-{
-	delete[] this->nick;
-}
-
-unsigned User::getUuid()
-{
-	return this->uuid;
-}
-
 //---View---
 //----------
+// A view has attached to it a range of available actions or certain verbs that are used by the console to do some action.
+// It's basically a dictionary holding the options mapping
 map<string, map<char, string>> View::ViewsOptions = { { "", {{'\0', ""}} } };
 
-View::View(string viewName, map<char, string> availableOptions, bool hasInterpolation)
+View::View(string &viewName, map<char, string> &availableOptions, bool hasInterpolation)
 {
 	this->viewName = new char[strlen(viewName.c_str()) + 1];
 	strcpy(this->viewName, viewName.c_str());
@@ -49,7 +25,7 @@ View::View(string viewName, map<char, string> availableOptions, bool hasInterpol
 	this->hasInterpolation = hasInterpolation;
 }
 
-map<char, string> View::getAvailableOptions()
+map<char, string> &View::getAvailableOptions()
 {
 	return this->availableOptions;
 }
@@ -61,11 +37,27 @@ char *View::getViewName()
 
 void View::loadViewsOptions()
 {
-	string someView = "aView",
-		anotherView = "aaaView";
+	string homeView = "home.view",
+		loginView = "login.view",
+		signupView = "signup.view",
+		browseIndexView = "browse-index.view",
+		faqView = "faq.view",
+		helpView = "help.view";
 
-	View::ViewsOptions = { { someView, {{'1', "theview.view"}}},
-					   {anotherView, {{'2', "someview.view"}}} };
+	View::ViewsOptions = {
+							{ homeView, { { '1', "login.view" }, { '2', "signup.view" }, { '3', "browse-index.view" },
+										  { '4', "faq.view" }, { '5', "help.view" }, { 'q', "quit" } } },
+							{ loginView, { { '1', "browse-index.view" }, { 'q', "quit" } } },
+							{ signupView, { { 'q', "quit" } } },
+							{ browseIndexView, { {'q', "quit"} } },
+							{ faqView, { {'q', "quit"} } },
+							{ helpView, { { 'q', "quit" } } }
+	};
+}
+
+map<string, map<char, string>> &View::getViewsOptions()
+{
+	return View::ViewsOptions;
 }
 
 View::~View()
@@ -83,11 +75,14 @@ Console::Console()
 {
 	this->mode = new char[strlen("live") + 1];
 	strcpy(this->mode, "live");
-	map<char, string> availableOptions = { {'1', "login.view"}, {'2', "signup.view"}, {'3', "browse-index.view"}, {'4', "faq.view"}, {'q', "quit"} };
+	this->exit = false;
+
+	map<char, string> availableOptions = View::getViewsOptions().find(Console::initialView)->second;
 
 	this->currentView = new View(Console::initialView, availableOptions, false);
 	this->delay = 2000;
 
+	this->loadActions();
 	this->loadViews(Console::viewsFolder);
 
 	if (find(this->loadedViews.begin(), this->loadedViews.end(), this->currentView->getViewName()) != this->loadedViews.end())
@@ -105,9 +100,15 @@ Console::Console(char *mode)
 {
 	this->mode = new char[strlen("debug") + 1];
 	strcpy(this->mode, "debug");
-	string viewName = "debug.view";
-	this->currentView = new View(viewName, { {'q', "quit"} }, true);
+	this->exit = false;
 
+	string viewName = "debug.view";
+	map<char, string> availableOptions = View::getViewsOptions().find(Console::initialView)->second;
+
+	this->currentView = new View(viewName, availableOptions, true);
+	this->delay = 2000;
+
+	this->loadActions();
 	this->loadViews(Console::viewsFolder);
 
 	if (find(this->loadedViews.begin(), this->loadedViews.end(), this->currentView->getViewName()) != this->loadedViews.end())
@@ -131,6 +132,17 @@ void Console::setLastInput(char input)
 	{
 		throw invalid_argument("Please provide a valid selection.");
 	}
+}
+
+vector<char> &Console::getActions()
+{
+	return this->actions;
+}
+
+void Console::showPrompt()
+{
+	cout << endl
+		<< ">> ";
 }
 
 char Console::getLastInput()
@@ -160,6 +172,13 @@ void Console::loadViews(const fs::path &viewsFolder)
 	}
 }
 
+void Console::loadActions()
+{
+	vector<char> actions = { 'q', 'b', 'n' };
+
+	this->actions = actions;
+}
+
 void Console::renderView(View &view)
 {
 	string content;
@@ -177,7 +196,7 @@ void Console::renderView(View &view)
 	}
 	else
 	{
-		throw system_error(error_code(500, system_category()), "The view stream couldn't be opened.");
+		throw system_error(error_code(3, system_category()), "The view stream couldn't be opened");
 	}
 
 	viewFile.close();
@@ -185,15 +204,62 @@ void Console::renderView(View &view)
 
 void Console::renderNextView()
 {
-	this->currentView = new View(this->currentView->getAvailableOptions().find(this->getLastInput())->second, { {'5', "lala"} }, false);
+	string nextView = this->currentView->getAvailableOptions().find(this->getLastInput())->second;
+	map<char, string> nextOptions = View::getViewsOptions().find(nextView)->second;
 
-	//TODO: finish the renderer
+	// Cache the current view
+	this->previousViews.push_back(this->currentView);
+	// The name and then the corresponding options map to the view from ViewsOptions and the hasInterpolation boolean
+	this->currentView = new View(nextView,
+								 nextOptions,
+								 false);
+
+	//TODO: detemine if the view has interpolation enabled in order to replace the template strings or to splice the view in certain places
+	system("cls");
+	this->renderView(*this->currentView);
+}
+
+void Console::renderPreviousView()
+{
+	if (!this->previousViews.empty())
+	{
+		this->renderView(*this->previousViews.back());
+		this->previousViews.pop_back();
+	}
 }
 
 void Console::reloadView()
 {
 	system("cls");
 	this->renderView(*this->currentView);
+}
+
+void Console::takeActionIfAny()
+{
+	if (isInCharVector(this->getActions(), this->lastInput))
+	{
+		switch (this->lastInput)
+		{
+			case 'q':
+				this->breakTheLoop();
+				break;
+			case 'b':
+				this->renderPreviousView();
+				break;
+			case 'n':
+				// TODO: implement pagination for the questions index view
+		}
+	}
+}
+
+bool Console::shouldExit()
+{
+	return this->exit;
+}
+
+void Console::breakTheLoop()
+{
+	this->exit = true;
 }
 
 unsigned Console::getDelay()
@@ -207,6 +273,6 @@ Console::~Console()
 	delete[] this->mode;
 
 	system("cls");
-	cout << "Program exited successfully..."
+	cout << "Program exited the main console."
 		<< endl;
 }

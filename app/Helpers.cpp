@@ -37,3 +37,8 @@ void sleepAndClearBuffer(unsigned delay)
 		_getch();
 	}
 }
+
+void clearScreen()
+{
+	system("cls");
+}

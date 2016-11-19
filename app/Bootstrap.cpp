@@ -1,9 +1,6 @@
-#include <iostream>
-#include <Windows.h>
 #include <conio.h>
 
-#include "Helpers.h"
-#include "ClassContainer.h"
+#include "Console.h"
 
 using namespace std;
 
@@ -11,18 +8,19 @@ void main()
 {
 	try
 	{
-		Console console;
 		View::loadViewsOptions();
+		Console console;
+
 		do
 		{
 			try
 			{
-				cout << " >";
-
+				console.showPrompt();
 				console.setLastInput(_getch());
-				cout << console.getLastInput()
-					<< endl;
-				//console.renderNextView();
+				if (console.takeActionIfAny() == false)
+				{
+					console.renderNextView();
+				}
 			}
 			catch (const invalid_argument &e)
 			{
@@ -31,21 +29,22 @@ void main()
 					<< endl;
 
 				sleepAndClearBuffer(console.getDelay());
-
 				console.reloadView();
 			}
-			catch (const system_error &e)
-			{
-				cout << e.code()
-					<< " "
-					<< e.what()
-					<< endl;
-			}
-		} while (console.getLastInput() != 'q');
+		} while (!console.shouldExit());
 	}
 	catch (const invalid_argument &e)
 	{
 		cout << e.what()
+			<< endl;
+	}
+	catch (const system_error &e)
+	{
+		clearScreen();
+
+		cout << e.code()
+			<< " "
+			<< e.what()
 			<< endl;
 	}
 }

@@ -1,42 +1,27 @@
 #include <iostream>
+#include <fstream>
+#include <sstream>
+#include <stdexcept>
 #include <filesystem>
 #include <map>
+
+#include "Helpers.h"
+#include "View.h"
 
 using namespace std;
 namespace fs = std::experimental::filesystem::v1;
 
-class View {
-private:
-	static map<string, map<char, string>> ViewsOptions;
-
-	char *viewName;
-	bool hasInterpolation;
-
-	map<char, string> availableOptions;
-
-	View();
-public:
-	View(string &, map<char, string> &, bool);
-
-	map<char, string> &getAvailableOptions();
-	char *getViewName();
-	static void loadViewsOptions();
-	static map<string, map<char, string>> &getViewsOptions();
-
-	~View();
-};
-
 class Console {
 private:
 	static string initialView;
-	static char *viewsFolder;
+	static string viewsFolder;
 
 	char *mode;
 	char lastInput;
 	unsigned delay;
 	bool exit;
-	View *currentView;
-	vector<View *> previousViews;
+	View currentView;
+	vector<View> previousViews;
 
 	vector<fs::path> loadedViews;
 	vector<char> actions;
@@ -58,7 +43,8 @@ public:
 	void renderNextView();
 	void renderPreviousView();
 	void reloadView();
-	void takeActionIfAny();
+
+	bool takeActionIfAny();
 	bool shouldExit();
 	void breakTheLoop();
 

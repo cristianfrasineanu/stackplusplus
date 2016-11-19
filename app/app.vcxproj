@@ -87,7 +87,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>C:\Projects\StackPlusPlus\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -144,12 +144,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Bootstrap.cpp" />
-    <ClCompile Include="ClassContainer.cpp" />
+    <ClCompile Include="Console.cpp" />
     <ClCompile Include="Helpers.cpp" />
+    <ClCompile Include="User.cpp" />
+    <ClCompile Include="View.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ClassContainer.h" />
+    <ClInclude Include="Console.h" />
     <ClInclude Include="Helpers.h" />
+    <ClInclude Include="User.h" />
+    <ClInclude Include="View.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
