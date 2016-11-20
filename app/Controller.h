@@ -14,21 +14,25 @@ private:
 
 	char *controllerName;
 	vector<string> controllerAttributions;
+	map<string, string> userInputs;
 	string viewChunk;
+	// Model model;
 
+	void justShow();
 	void prepareView();
-	void prepareViewInput();
+	void prepareViewInput(string &, string &);
 	// TODO: interpolate the view strings for output with the according variables received from the model.
 public:
-	static string &getViewInputFormat();
-	static string &getViewOutputFormat();
-	static bool hasInput(string &);
-
 	Controller();
 	Controller(char *, string &, string &);
 
+	bool hasInput(string &);
+	bool hasOutput(string &);
+
 	vector<string> &getControllerAttributions();
 	char *getControllerName();
+
+	void chopChunkAndGetAlias(string &);
 
 	void operator=(const Controller &);
 

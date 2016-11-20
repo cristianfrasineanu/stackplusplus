@@ -2,8 +2,8 @@
 
 //---View---
 //----------
-// A view has attached to it a range of available actions or certain verbs that are used by the console to do some action.
-// It's basically a dictionary holding the options mapping.
+// A view has attached to it a range of available actions or verbs  
+// that are used by the console to do a certain action.
 map<string, map<char, string>> View::ViewsOptions = { { "",{ { '\0', "" } } } };
 string View::ViewExtenstion = ".view";
 

@@ -5,28 +5,59 @@
 string Controller::viewInputFormat = "@input-";
 string Controller::viewOutputFormat = "@output-";
 
+void Controller::justShow()
+{
+	cout << this->viewChunk
+		<< endl;
+}
+
 void Controller::prepareView()
 {
-	cout << this->viewChunk.c_str()
-		<< endl;
+	// Preserve the original one
+	string copyChunk = this->viewChunk;
 
-	// Show for now
-	// TODO use the input/output format to parse the chunk
+	// Determine the order of the input/output from the user.
+	while (this->hasInput(copyChunk) || this->hasOutput(copyChunk))
+	{
+		if (!this->hasOutput(copyChunk))
+		{
+			this->chopChunkAndGetAlias(copyChunk);
+		}
+		if (!this->hasInput(copyChunk))
+		{
+			// Gather all the required variables from the model and replace them in chunk at once (no need to wait for input), thus discarding the dummy chunk
+			// this->bringAllDataInChunk()
+		}
+		else
+		{
+			if (copyChunk.find(Controller::viewInputFormat) < copyChunk.find(Controller::viewOutputFormat))
+			{
+				this->chopChunkAndGetAlias(copyChunk);
+			}
+			else
+			{
+				// this->bringDataOnceInChunk()
+			}
+		}
+	}
+
+	// Show the rest
+	if (copyChunk.size())
+	{
+		cout << copyChunk
+			<< endl;
+	}
 }
 
-void Controller::prepareViewInput()
+void Controller::prepareViewInput(string &subChunk, string &inputAlias)
 {
-	// Prompt the user for input
-}
+	string userInput;
+	
+	cout << subChunk << " ";
+	cin >> userInput;
+	cout << endl;
 
-string &Controller::getViewInputFormat()
-{
-	return Controller::viewInputFormat;
-}
-
-string & Controller::getViewOutputFormat()
-{
-	return Controller::viewOutputFormat;
+	this->userInputs[inputAlias] = userInput;
 }
 
 Controller::Controller()
@@ -35,6 +66,7 @@ Controller::Controller()
 	strcpy(this->controllerName, "NO_CONTROLLER");
 	this->viewChunk = "";
 	this->controllerAttributions = {};
+	this->userInputs = {};
 }
 
 Controller::Controller(char *viewName, string &viewChunk, string &ViewExtension)
@@ -46,8 +78,9 @@ Controller::Controller(char *viewName, string &viewChunk, string &ViewExtension)
 	strcpy(this->controllerName, controllerName.c_str());
 	this->viewChunk = viewChunk;
 	this->controllerAttributions = {};
+	this->userInputs = {};
 
-	this->prepareView();
+	(this->hasInput(viewChunk) || this->hasOutput(viewChunk)) ? this->prepareView() : this->justShow();
 }
 
 vector<string>& Controller::getControllerAttributions()
@@ -58,6 +91,17 @@ vector<string>& Controller::getControllerAttributions()
 char *Controller::getControllerName()
 {
 	return this->controllerName;
+}
+
+void Controller::chopChunkAndGetAlias(string &chunk)
+{
+	// Splice the alias (take the part after the "-" in the template string).
+	string inputAlias = chunk.substr(chunk.find(Controller::viewInputFormat) + Controller::viewInputFormat.size(), 
+									 chunk.find("\n", chunk.find(Controller::viewInputFormat)) - (chunk.find(Controller::viewInputFormat) + Controller::viewInputFormat.size()));
+
+	this->prepareViewInput(chunk.substr(0, chunk.find(Controller::viewInputFormat) - 1), inputAlias);
+
+	chunk.erase(0, chunk.find(inputAlias) + inputAlias.size() + 2);
 }
 
 // One Controller at a time, you expected more?
@@ -75,7 +119,12 @@ void Controller::operator=(const Controller &controller)
 
 bool Controller::hasInput(string &raw)
 {
-	return raw.find(Controller::getViewInputFormat()) != string::npos;
+	return raw.find(Controller::viewInputFormat) != string::npos;
+}
+
+bool Controller::hasOutput(string &raw)
+{
+	return raw.find(Controller::viewOutputFormat) != string::npos;
 }
 
 Controller::~Controller()
