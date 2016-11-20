@@ -9,6 +9,9 @@ void Controller::prepareView()
 {
 	cout << this->viewChunk.c_str()
 		<< endl;
+
+	// Show for now
+	// TODO use the input/output format to parse the chunk
 }
 
 void Controller::prepareViewInput()
@@ -42,7 +45,7 @@ Controller::Controller(char *viewName, string &viewChunk, string &ViewExtension)
 	this->controllerName = new char[strlen(controllerName.c_str()) + 1];
 	strcpy(this->controllerName, controllerName.c_str());
 	this->viewChunk = viewChunk;
-	this->controllerAttributions = controllerAttributions;
+	this->controllerAttributions = {};
 
 	this->prepareView();
 }
@@ -57,6 +60,7 @@ char *Controller::getControllerName()
 	return this->controllerName;
 }
 
+// One Controller at a time, you expected more?
 void Controller::operator=(const Controller &controller)
 {
 	if (controller.controllerName != NULL)

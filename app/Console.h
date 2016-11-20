@@ -45,7 +45,7 @@ public:
 	void showPrompt();
 	unsigned getDelay();
 
-	void renderView();
+	void handleView();
 	void renderNextView();
 	void renderPreviousView();
 	void reloadView();

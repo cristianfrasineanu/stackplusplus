@@ -11,6 +11,7 @@ View::View()
 {
 	this->viewName = new char[strlen("NO_VIEW") + 1];
 	strcpy(this->viewName, "NO_VIEW");
+	this->availableOptions = {};
 }
 
 View::View(string &viewName, map<char, string> &availableOptions)
@@ -44,6 +45,7 @@ void View::setRawFormat(string &rawFormat)
 
 void View::loadViewsOptions()
 {
+	// TODO: load ViewsOptions via config file
 	string homeView = "home.view",
 		loginView = "login.view",
 		signupView = "signup.view",
@@ -77,7 +79,7 @@ string View::getViewExtension()
 	return View::ViewExtenstion;
 }
 
-// Prevent multiple assignments of views, i.e. a view can transition only once and cannot split into multiple views.
+// The transition can be made only between two views, synchronously.
 void View::operator=(const View &view)
 {
 	delete[] this->viewName;

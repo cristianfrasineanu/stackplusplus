@@ -10,20 +10,21 @@ string Console::viewsFolder = "..\\views";
 Console::Console()
 {
 	this->mode = new char[strlen("live") + 1];
+	this->lastInput = '\0';
 	strcpy(this->mode, "live");
 	this->exit = false;
 
 	map<char, string> availableOptions = View::getViewsOptions().find(Console::initialView)->second;
+	this->previousViews = {};
 
 	this->currentView = View(Console::initialView, availableOptions);
 	this->delay = 2000;
-
 	this->loadActions();
 	this->loadViews(Console::viewsFolder);
 
 	if (find(this->loadedViews.begin(), this->loadedViews.end(), this->currentView.getViewName()) != this->loadedViews.end())
 	{
-		this->renderView();
+		this->handleView();
 	}
 	else
 	{
@@ -36,20 +37,21 @@ Console::Console(char *mode)
 {
 	this->mode = new char[strlen("debug") + 1];
 	strcpy(this->mode, "debug");
+	this->lastInput = '\0';
 	this->exit = false;
 
 	string viewName = "debug.view";
 	map<char, string> availableOptions = View::getViewsOptions().find(Console::initialView)->second;
+	this->previousViews = {};
 
 	this->currentView = View(viewName, availableOptions);
 	this->delay = 2000;
-
 	this->loadActions();
 	this->loadViews(Console::viewsFolder);
 
 	if (find(this->loadedViews.begin(), this->loadedViews.end(), this->currentView.getViewName()) != this->loadedViews.end())
 	{
-		this->renderView();
+		this->handleView();
 	}
 	else
 	{
@@ -110,15 +112,16 @@ void Console::loadViews(const fs::path &viewsFolder)
 
 void Console::loadActions()
 {
+	// TODO: load actions via config file
 	vector<char> actions = { 'q', 'b', 'n', 'c' };
 
 	this->actions = actions;
 }
 
-void Console::renderView()
+void Console::handleView()
 {
-	string content;
-	string path = Console::viewsFolder;
+	string content,
+		path = Console::viewsFolder;
 	path.append("\\").append(this->currentView.getViewName());
 
 	stringstream buffer;
@@ -128,21 +131,15 @@ void Console::renderView()
 	{
 		buffer << viewFile.rdbuf();
 		this->currentView.setRawFormat(buffer.str());
-
-		if (Controller::hasInput(buffer.str()))
-		{
-			this->theController = Controller(this->currentView.getViewName(), buffer.str(), View::getViewExtension());
-		}
-		else
-		{
-			cout << buffer.str()
-				<< endl;
-		}
-
-		buffer.clear();
-
-		viewFile.close();
+		this->theController = Controller(this->currentView.getViewName(), buffer.str(), View::getViewExtension());
 	}
+	else
+	{
+		cout << buffer.str()
+			<< endl;
+	}
+	buffer.clear();
+	viewFile.close();
 }
 
 void Console::renderNextView()
@@ -152,11 +149,10 @@ void Console::renderNextView()
 
 	// Cache the current view
 	this->previousViews.push_back(this->currentView);
-
 	this->currentView = View(nextView, nextOptions);
 
 	clearScreen();
-	this->renderView();
+	this->handleView();
 }
 
 void Console::renderPreviousView()
@@ -165,7 +161,7 @@ void Console::renderPreviousView()
 	{
 		clearScreen();
 		this->currentView = this->previousViews.back();
-		this->renderView();
+		this->handleView();
 		this->previousViews.pop_back();
 	}
 }
@@ -173,7 +169,7 @@ void Console::renderPreviousView()
 void Console::reloadView()
 {
 	clearScreen();
-	this->renderView();
+	this->handleView();
 }
 
 bool Console::takeActionIfAny()
