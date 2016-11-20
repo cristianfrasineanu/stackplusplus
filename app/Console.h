@@ -5,8 +5,9 @@
 #include <filesystem>
 #include <map>
 
-#include "Helpers.h"
 #include "View.h"
+#include "Helpers.h"
+#include "Controller.h"
 
 using namespace std;
 namespace fs = std::experimental::filesystem::v1;
@@ -15,12 +16,13 @@ class Console {
 private:
 	static string initialView;
 	static string viewsFolder;
-
+	
 	char *mode;
 	char lastInput;
 	unsigned delay;
 	bool exit;
 	View currentView;
+	Controller theController;
 	vector<View> previousViews;
 
 	vector<fs::path> loadedViews;
@@ -33,20 +35,20 @@ public:
 	Console(char *);
 
 	vector<char> &getActions();
-
-	void showPrompt();
 	char getLastInput();
+
 	void setLastInput(char);
-	unsigned getDelay();
-
-	void renderView(View &);
-	void renderNextView();
-	void renderPreviousView();
-	void reloadView();
-
 	bool takeActionIfAny();
 	bool shouldExit();
 	void breakTheLoop();
+
+	void showPrompt();
+	unsigned getDelay();
+
+	void renderView();
+	void renderNextView();
+	void renderPreviousView();
+	void reloadView();
 
 	~Console();
 };

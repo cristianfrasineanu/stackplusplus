@@ -4,9 +4,13 @@
 _\ \ || (_| | (__|   </ ___/| | |_| \__ \/ ___/| | |_| \__ \
 \__/\__\__,_|\___|_|\_\/    |_|\__,_|___/\/    |_|\__,_|___/
                                                             
-~~~ Holy Molly, you've really created an account!
+~~~ Holy Molly, you've really created an account didn't you?
 
-{LOGIN}
+Username: @input-username
+
+Password: @input-password
+
+*** Press -c- to confirm or -b- to go to the main menu. ***
 
 ===========================================================
 # (c) 2016 Cristian-Adrian Frasineanu | GNU GPLv3 licence #

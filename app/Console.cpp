@@ -15,7 +15,7 @@ Console::Console()
 
 	map<char, string> availableOptions = View::getViewsOptions().find(Console::initialView)->second;
 
-	this->currentView = View(Console::initialView, availableOptions, false);
+	this->currentView = View(Console::initialView, availableOptions);
 	this->delay = 2000;
 
 	this->loadActions();
@@ -23,7 +23,7 @@ Console::Console()
 
 	if (find(this->loadedViews.begin(), this->loadedViews.end(), this->currentView.getViewName()) != this->loadedViews.end())
 	{
-		this->renderView(this->currentView);
+		this->renderView();
 	}
 	else
 	{
@@ -41,7 +41,7 @@ Console::Console(char *mode)
 	string viewName = "debug.view";
 	map<char, string> availableOptions = View::getViewsOptions().find(Console::initialView)->second;
 
-	this->currentView = View(viewName, availableOptions, true);
+	this->currentView = View(viewName, availableOptions);
 	this->delay = 2000;
 
 	this->loadActions();
@@ -49,7 +49,7 @@ Console::Console(char *mode)
 
 	if (find(this->loadedViews.begin(), this->loadedViews.end(), this->currentView.getViewName()) != this->loadedViews.end())
 	{
-		this->renderView(this->currentView);
+		this->renderView();
 	}
 	else
 	{
@@ -100,7 +100,7 @@ void Console::loadViews(const fs::path &viewsFolder)
 	while (it != endit)
 	{
 		if (fs::is_regular_file(*it)
-			&& it->path().extension() == ".view")
+			&& it->path().extension().string() == View::getViewExtension())
 		{
 			this->loadedViews.push_back(it->path().filename());
 		}
@@ -110,25 +110,34 @@ void Console::loadViews(const fs::path &viewsFolder)
 
 void Console::loadActions()
 {
-	vector<char> actions = { 'q', 'b', 'n' };
+	vector<char> actions = { 'q', 'b', 'n', 'c' };
 
 	this->actions = actions;
 }
 
-void Console::renderView(View &view)
+void Console::renderView()
 {
 	string content;
 	string path = Console::viewsFolder;
-	path.append("\\").append(view.getViewName());
+	path.append("\\").append(this->currentView.getViewName());
+
 	stringstream buffer;
 	ifstream viewFile(path, ios::out);
 
 	if (viewFile.is_open())
 	{
 		buffer << viewFile.rdbuf();
+		this->currentView.setRawFormat(buffer.str());
 
-		cout << buffer.str()
-			<< endl;
+		if (Controller::hasInput(buffer.str()))
+		{
+			this->theController = Controller(this->currentView.getViewName(), buffer.str(), View::getViewExtension());
+		}
+		else
+		{
+			cout << buffer.str()
+				<< endl;
+		}
 
 		buffer.clear();
 
@@ -144,13 +153,10 @@ void Console::renderNextView()
 	// Cache the current view
 	this->previousViews.push_back(this->currentView);
 
-	this->currentView = View(nextView, nextOptions, false);
+	this->currentView = View(nextView, nextOptions);
 
-	//TODO: detemine if the view has interpolation enabled in order to replace the template strings or to splice the view in certain places (prepareView)
 	clearScreen();
-	this->renderView(this->currentView);
-
-	//Show it directly for now...
+	this->renderView();
 }
 
 void Console::renderPreviousView()
@@ -159,7 +165,7 @@ void Console::renderPreviousView()
 	{
 		clearScreen();
 		this->currentView = this->previousViews.back();
-		this->renderView(this->currentView);
+		this->renderView();
 		this->previousViews.pop_back();
 	}
 }
@@ -167,7 +173,7 @@ void Console::renderPreviousView()
 void Console::reloadView()
 {
 	clearScreen();
-	this->renderView(this->currentView);
+	this->renderView();
 }
 
 bool Console::takeActionIfAny()

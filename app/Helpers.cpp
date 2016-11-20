@@ -1,9 +1,3 @@
-#include <iostream>
-#include <vector>
-#include <map>
-#include <Windows.h>
-#include <conio.h>
-
 #include "Helpers.h"
 
 bool isInCharStringMap(const map<char, string> &haystack, char needle)
@@ -41,4 +35,30 @@ void sleepAndClearBuffer(unsigned delay)
 void clearScreen()
 {
 	system("cls");
+}
+
+void log(char *data, char *identifier, char *situation)
+{
+	cout << "---///////////---" << endl;
+	cout << identifier << " is currently " << data << " when " << situation << endl;
+	cout << "---///////////---" << endl;
+}
+
+void log(string &data, char *identifier, char *situation)
+{
+	cout << "---///////////---" << endl;
+	cout << identifier << " is currently " << data.c_str() << " when " << situation << endl;
+	cout << "---///////////---" << endl;
+}
+
+void log(vector<string> &data, char *identifier, char *situation)
+{
+	cout << "---///////////---" << endl;
+	cout << identifier << " is currently ";
+	for (vector<string>::iterator it = data.begin(); it != data.end(); it++)
+	{
+		cout << (*it).c_str() << " ";
+	}
+	cout << " when " << situation << endl;
+	cout << "---///////////---" << endl;
 }

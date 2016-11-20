@@ -1,5 +1,3 @@
-#include <conio.h>
-
 #include "Console.h"
 
 using namespace std;
@@ -10,7 +8,6 @@ void main()
 	{
 		View::loadViewsOptions();
 		Console console;
-
 		do
 		{
 			try
@@ -24,9 +21,7 @@ void main()
 			}
 			catch (const invalid_argument &e)
 			{
-				cout << endl
-					<< e.what()
-					<< endl;
+				cout << e.what();
 
 				sleepAndClearBuffer(console.getDelay());
 				console.reloadView();
