@@ -5,8 +5,7 @@
 #include <conio.h>
 #include <Windows.h>
 
-// Define include guard as function templates always comes along with non-template
-// code that's called multiple times during run-time, hence this file.
+// Define include guard as function templates will get a redefined error.
 #pragma once
 
 using namespace std;

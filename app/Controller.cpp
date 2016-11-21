@@ -13,7 +13,6 @@ void Controller::justShow()
 
 void Controller::prepareView()
 {
-	// Preserve the original one
 	string copyChunk = this->viewChunk;
 
 	if (this->hasInput(copyChunk))
@@ -32,12 +31,12 @@ void Controller::prepareView()
 		{
 			this->chopChunkAndGetAlias(copyChunk);
 		}
-		if (!this->hasInput(copyChunk))
+		else if (!this->hasInput(copyChunk))
 		{
-			// Gather all the required variables from the model and replace them in chunk at once (no need to wait for input), thus discarding the dummy chunk
-			// this->bringAllDataInChunk()
+			// To avoid the type issue, let the model to the outputting via a method, 
+			// same way as getting the input, chopping the chunk.
 		}
-		else
+		else if (this->hasInput(copyChunk) || this->hasOutput(copyChunk))
 		{
 			if (copyChunk.find(Controller::viewInputFormat) < copyChunk.find(Controller::viewOutputFormat))
 			{
@@ -83,7 +82,7 @@ Controller::Controller(char *viewName, string &viewChunk, string &ViewExtension)
 	string controllerName = viewName;
 	controllerName.erase(controllerName.find(ViewExtension), ViewExtension.size()).append("Controller");
 
-	this->controllerName = new char[strlen(controllerName.c_str()) + 1];
+	this->controllerName = new char[controllerName.size() + 1];
 	strcpy(this->controllerName, controllerName.c_str());
 	this->viewChunk = viewChunk;
 	this->controllerAttributions = {};
@@ -138,6 +137,5 @@ bool Controller::hasOutput(string &raw)
 
 Controller::~Controller()
 {
-	log(this->userInputs, "userInput", "destroying the controller");
 	delete[] this->controllerName;
 }

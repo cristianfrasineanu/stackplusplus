@@ -16,7 +16,7 @@ View::View()
 
 View::View(string &viewName, map<char, string> &availableOptions)
 {
-	this->viewName = new char[strlen(viewName.c_str()) + 1];
+	this->viewName = new char[viewName.size() + 1];
 	strcpy(this->viewName, viewName.c_str());
 	this->availableOptions = availableOptions;
 }
