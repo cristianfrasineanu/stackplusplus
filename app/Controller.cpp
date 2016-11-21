@@ -16,6 +16,15 @@ void Controller::prepareView()
 	// Preserve the original one
 	string copyChunk = this->viewChunk;
 
+	if (this->hasInput(copyChunk))
+	{
+		this->controllerAttributions.insert(this->controllerAttributions.begin(), "input");
+	}
+	if (this->hasOutput(copyChunk))
+	{
+		this->controllerAttributions.insert(this->controllerAttributions.begin(), "output");
+	}
+
 	// Determine the order of the input/output from the user.
 	while (this->hasInput(copyChunk) || this->hasOutput(copyChunk))
 	{
@@ -129,5 +138,6 @@ bool Controller::hasOutput(string &raw)
 
 Controller::~Controller()
 {
+	log(this->userInputs, "userInput", "destroying the controller");
 	delete[] this->controllerName;
 }

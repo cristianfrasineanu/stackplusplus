@@ -62,7 +62,7 @@ Console::Console(char *mode)
 
 void Console::setLastInput(char input)
 {
-	if (isInCharStringMap(this->currentView.getAvailableOptions(), input))
+	if (isInMap(this->currentView.getAvailableOptions(), input))
 	{
 		this->lastInput = input;
 	}
@@ -132,14 +132,15 @@ void Console::handleView()
 		buffer << viewFile.rdbuf();
 		this->currentView.setRawFormat(buffer.str());
 		this->theController = Controller(this->currentView.getViewName(), buffer.str(), View::getViewExtension());
+
+		buffer.clear();
+		viewFile.close();
 	}
 	else
 	{
-		cout << buffer.str()
-			<< endl;
+		string error_message = "The input stream from the view couldn't be opened.";
+		throw system_error(error_code(3, system_category()), error_message);
 	}
-	buffer.clear();
-	viewFile.close();
 }
 
 void Console::renderNextView()
@@ -174,7 +175,7 @@ void Console::reloadView()
 
 bool Console::takeActionIfAny()
 {
-	if (isInCharVector(this->getActions(), this->lastInput))
+	if (isInVector(this->getActions(), this->lastInput))
 	{
 		switch (this->lastInput)
 		{
@@ -186,6 +187,9 @@ bool Console::takeActionIfAny()
 				break;
 			case 'n':
 				// TODO: implement pagination for the questions index view
+				break;
+			case 'c':
+				// TODO: implement confirmation action for input decisions
 				break;
 			default:
 				break;

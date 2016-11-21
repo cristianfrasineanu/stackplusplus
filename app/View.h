@@ -1,7 +1,5 @@
 #include <map>
 
-#include "Helpers.h"
-
 using namespace std;
 
 class View {

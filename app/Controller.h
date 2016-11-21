@@ -21,7 +21,7 @@ private:
 	void justShow();
 	void prepareView();
 	void prepareViewInput(string &, string &);
-	// TODO: interpolate the view strings for output with the according variables received from the model.
+	// TODO: take the chunk one by one for output and request output from model for each output variable
 public:
 	Controller();
 	Controller(char *, string &, string &);
