@@ -4,6 +4,7 @@
 #include <string>
 
 #include "Helpers.h"
+#include "Model.h"
 
 using namespace std;
 
@@ -14,9 +15,8 @@ private:
 
 	char *controllerName;
 	vector<string> controllerAttributions;
-	map<string, string> userInputs;
 	string viewChunk;
-	// Model model;
+	Model model;
 
 	void justShow();
 	void prepareView();

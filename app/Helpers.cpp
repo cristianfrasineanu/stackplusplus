@@ -1,5 +1,11 @@
 #include "Helpers.h"
 
+void toLowerCase(string &input)
+{
+	transform(input.begin(), input.end(), input.begin(),
+			  [](unsigned char ch) { return tolower(ch); });
+}
+
 void sleepAndClearBuffer(unsigned delay)
 {
 	Sleep(delay);

@@ -1,27 +1,47 @@
 #include "User.h"
 
-//--- User --- 
-//------------
-unsigned User::count = 0;
+string User::modelPath = "..\\db\\user.store";
+string User::modelAlias = "user";
 
-void User::setFromLastUuid()
+void User::defineValidationRules()
 {
-	// Get the last uuid from the db file
-
-	User::count = 30;
+	this->ValidationRules = {};
 }
 
-User::User() : uuid(User::count++)
+User::User()
 {
-	this->nick = new char[4];
+	this->defineValidationRules();
 }
 
-User::~User()
+void User::receiveCleanInput(map<string, string>& cleanInput)
 {
-	delete[] this->nick;
+	cout << "Got the input, doing something with it..."
+		<< endl;
 }
 
-unsigned User::getUuid()
+void User::writeNewRecord()
 {
-	return this->uuid;
+	//
 }
+
+void User::validateItem()
+{
+	// Appli validation rules for the next item
+}
+
+void User::retrieveItemForActive()
+{
+	// Search for the record having active set to true
+}
+
+void User::retrieveAll()
+{
+	// Print everything
+}
+
+void User::logPayload()
+{
+	// 
+}
+
+

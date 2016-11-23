@@ -17,11 +17,11 @@ void Controller::prepareView()
 
 	if (this->hasInput(copyChunk))
 	{
-		this->controllerAttributions.insert(this->controllerAttributions.begin(), "input");
+		this->controllerAttributions.push_back("input");
 	}
 	if (this->hasOutput(copyChunk))
 	{
-		this->controllerAttributions.insert(this->controllerAttributions.begin(), "output");
+		this->controllerAttributions.push_back("output");
 	}
 
 	// Determine the order of the input/output from the user.
@@ -55,17 +55,31 @@ void Controller::prepareView()
 		cout << copyChunk
 			<< endl;
 	}
+
+	// The input was validated and the model can safely operate now.
+	this->model.confirmInput();
 }
 
 void Controller::prepareViewInput(string &subChunk, string &inputAlias)
 {
 	string userInput;
-	
+	map<string, string> currentInput;
+
 	cout << subChunk << " ";
 	cin >> userInput;
 	cout << endl;
 
-	this->userInputs[inputAlias] = userInput;
+	currentInput[inputAlias] = userInput;
+
+	// Send the serialized input to the accessor model in order to determine if there are
+	// any validation errors and if we can proceed
+	//try
+	//{
+		this->model.sendSerializedInput(currentInput);
+	//}
+
+	// catch if there are any errors, either validation or argument error
+
 }
 
 Controller::Controller()
@@ -74,7 +88,6 @@ Controller::Controller()
 	strcpy(this->controllerName, "NO_CONTROLLER");
 	this->viewChunk = "";
 	this->controllerAttributions = {};
-	this->userInputs = {};
 }
 
 Controller::Controller(char *viewName, string &viewChunk, string &ViewExtension)
@@ -86,7 +99,6 @@ Controller::Controller(char *viewName, string &viewChunk, string &ViewExtension)
 	strcpy(this->controllerName, controllerName.c_str());
 	this->viewChunk = viewChunk;
 	this->controllerAttributions = {};
-	this->userInputs = {};
 
 	(this->hasInput(viewChunk) || this->hasOutput(viewChunk)) ? this->prepareView() : this->justShow();
 }
@@ -104,7 +116,7 @@ char *Controller::getControllerName()
 void Controller::chopChunkAndGetAlias(string &chunk)
 {
 	// Splice the alias (take the part after the "-" in the template string).
-	string inputAlias = chunk.substr(chunk.find(Controller::viewInputFormat) + Controller::viewInputFormat.size(), 
+	string inputAlias = chunk.substr(chunk.find(Controller::viewInputFormat) + Controller::viewInputFormat.size(),
 									 chunk.find("\n", chunk.find(Controller::viewInputFormat)) - (chunk.find(Controller::viewInputFormat) + Controller::viewInputFormat.size()));
 
 	this->prepareViewInput(chunk.substr(0, chunk.find(Controller::viewInputFormat) - 1), inputAlias);
@@ -112,7 +124,7 @@ void Controller::chopChunkAndGetAlias(string &chunk)
 	chunk.erase(0, chunk.find(inputAlias) + inputAlias.size() + 2);
 }
 
-// One Controller at a time, you expected more?
+// Don't assign multiple Controllers, stupid.
 void Controller::operator=(const Controller &controller)
 {
 	if (controller.controllerName != NULL)

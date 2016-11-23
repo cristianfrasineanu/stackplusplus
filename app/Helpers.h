@@ -1,12 +1,12 @@
+#pragma once
+
 #include <iostream>
+#include <algorithm>
 #include <string>
 #include <vector>
 #include <map>
 #include <conio.h>
 #include <Windows.h>
-
-// Define include guard as function templates will get a redefined error.
-#pragma once
 
 using namespace std;
 
@@ -56,5 +56,6 @@ inline bool isInMap(map<FirstT, SecondT> &haystack, FirstT needle)
 	return haystack.find(needle) != haystack.end();
 }
 
+void toLowerCase(string &);
 void sleepAndClearBuffer(unsigned delay);
 void clearScreen();

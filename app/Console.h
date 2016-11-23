@@ -36,6 +36,7 @@ public:
 
 	vector<char> &getActions();
 	char getLastInput();
+	string &getViewsFolder();
 
 	void setLastInput(char);
 	bool takeActionIfAny();

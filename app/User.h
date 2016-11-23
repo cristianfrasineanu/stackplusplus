@@ -1,12 +1,25 @@
-class User {
-private:
-	static unsigned count;
+#include <iostream>
+#include <string>
+#include <map>
 
-	const unsigned uuid;
-	char *nick;
+#include "Entity.h"
+
+class User : public EntityInterface {
+private:
+	static string modelPath;
+	static string modelAlias;
+
+	void defineValidationRules();
 public:
-	static void setFromLastUuid();
 	User();
-	~User();
-	unsigned getUuid();
+
+	void receiveCleanInput(map<string, string> &);
+	void writeNewRecord();
+	void validateItem();
+
+	void retrieveItemForActive();
+	void retrieveAll();
+
+	void logPayload();
+	// Set the active to false when destroying the object.
 };

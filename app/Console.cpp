@@ -3,7 +3,7 @@
 //---Console---
 //-------------
 // We need an initial state, because we don't have any means like mapping views to HTTP routes.
-// The Console class represents an entry point for all the other components, like View
+// The Console class represents an entry point for all the other components, like View.
 string Console::initialView = "home.view";
 string Console::viewsFolder = "..\\views";
 
@@ -86,6 +86,11 @@ void Console::showPrompt()
 char Console::getLastInput()
 {
 	return this->lastInput;
+}
+
+string & Console::getViewsFolder()
+{
+	return Console::viewsFolder;
 }
 
 void Console::loadViews(const fs::path &viewsFolder)
