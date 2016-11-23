@@ -15,19 +15,20 @@ private:
 
 	char *controllerName;
 	vector<string> controllerAttributions;
+	map<string, string> userInputs;
 	string viewChunk;
 	Model model;
 
 	void justShow();
 	void prepareView();
-	void prepareViewInput(string &, string &);
+	void prepareViewInput(const string &, const string &);
 	// TODO: take the chunk one by one for output and request output from model for each output variable
 public:
 	Controller();
 	Controller(char *, string &, string &);
 
-	bool hasInput(string &);
-	bool hasOutput(string &);
+	bool hasInput(const string &);
+	bool hasOutput(const string &);
 
 	vector<string> &getControllerAttributions();
 	char *getControllerName();

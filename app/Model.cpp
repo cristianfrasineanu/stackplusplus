@@ -1,16 +1,16 @@
 #include "Model.h"
 
-string Model::parseModelName(string inputAlias)
+string Model::parseEntityName(string inputAlias)
 {
 	return inputAlias.erase(inputAlias.find("-"), string::npos);
 }
 
-void Model::attachModel(string &model)
+void Model::attachEntity(string &model)
 {
 	toLowerCase(model);
 	if (model == "user")
 	{
-		this->currentModel = new User();
+		this->repository = new UserRepository();
 	}
 	else if (model == "question")
 	{
@@ -24,37 +24,41 @@ void Model::attachModel(string &model)
 
 Model::Model()
 {
-	this->accessHistory = {};
-	this->currentModel = NULL;
+	this->repository = NULL;
+	this->rawInput = {};
+	this->serializedInput = {};
 }
 
-void Model::sendSerializedInput(map<string, string> &input)
+void Model::sendSerializedInput()
 {
-	string modelName = this->parseModelName(input.begin()->first);
+	// There's interaction with only one model on the view.
+	string modelName = this->parseEntityName(this->rawInput.begin()->first),
+		inputAlias;
 
-	if (this->currentModel == NULL)
+	if (this->repository == NULL)
 	{
-		this->attachModel(modelName);
+		this->attachEntity(modelName);
 	}
 
-	string inputAlias = input.begin()->first;
-	inputAlias.erase(0, modelName.size() + 1);
+	for (map<string, string>::iterator it = this->rawInput.begin(); it != this->rawInput.end(); it++)
+	{
+		inputAlias = it->first;
+		inputAlias.erase(0, modelName.size() + 1);
 
-	// if (this->currentModel->validateItem(inputAlias, input.begin()->second)) {
+		this->serializedInput[inputAlias] = it->second;
+	}
 
-	// If the validation was successful push back into the ready map
-	this->ready[inputAlias] = input.begin()->second;
-
-	// }
+	// Sanitize the input, if there are any errors, display them and reload the view.
+	this->repository->validateItems(this->serializedInput);
 }
 
-void Model::confirmInput()
+void Model::confirmInput(const map<string, string> &payLoad)
 {
-	// Send the input to the attached model and determine if there are any errors and if the payload is complete
-	this->currentModel->receiveCleanInput(this->ready);
+	this->rawInput = payLoad;
+	this->sendSerializedInput();
 }
 
 Model::~Model()
 {
-	delete this->currentModel;
+	delete this->repository;
 }

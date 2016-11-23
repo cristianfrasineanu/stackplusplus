@@ -148,16 +148,16 @@
     <ClCompile Include="Controller.cpp" />
     <ClCompile Include="Helpers.cpp" />
     <ClCompile Include="Model.cpp" />
-    <ClCompile Include="User.cpp" />
+    <ClCompile Include="UserRepository.cpp" />
     <ClCompile Include="View.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Console.h" />
     <ClInclude Include="Controller.h" />
-    <ClInclude Include="Entity.h" />
+    <ClInclude Include="RepositoryInterface.h" />
     <ClInclude Include="Helpers.h" />
     <ClInclude Include="Model.h" />
-    <ClInclude Include="User.h" />
+    <ClInclude Include="UserRepository.h" />
     <ClInclude Include="View.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

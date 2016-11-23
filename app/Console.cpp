@@ -136,7 +136,21 @@ void Console::handleView()
 	{
 		buffer << viewFile.rdbuf();
 		this->currentView.setRawFormat(buffer.str());
-		this->theController = Controller(this->currentView.getViewName(), buffer.str(), View::getViewExtension());
+
+		// If there's any validation error inside the model
+		try
+		{
+			this->theController = Controller(this->currentView.getViewName(), buffer.str(), View::getViewExtension());
+		}
+		catch (const invalid_argument &e)
+		{
+			cout << endl
+				<< e.what()
+				<< endl;
+
+			sleepAndClearBuffer(3 * this->delay);
+			this->reloadView();
+		}
 
 		buffer.clear();
 		viewFile.close();

@@ -56,11 +56,14 @@ void Controller::prepareView()
 			<< endl;
 	}
 
-	// The input was validated and the model can safely operate now.
-	this->model.confirmInput();
+	// Send the payload to be validated and handled by the main model
+	if (isInVector(this->controllerAttributions, "input"))
+	{
+		this->model.confirmInput(this->userInputs);
+	}
 }
 
-void Controller::prepareViewInput(string &subChunk, string &inputAlias)
+void Controller::prepareViewInput(const string &subChunk, const string &inputAlias)
 {
 	string userInput;
 	map<string, string> currentInput;
@@ -69,17 +72,7 @@ void Controller::prepareViewInput(string &subChunk, string &inputAlias)
 	cin >> userInput;
 	cout << endl;
 
-	currentInput[inputAlias] = userInput;
-
-	// Send the serialized input to the accessor model in order to determine if there are
-	// any validation errors and if we can proceed
-	//try
-	//{
-		this->model.sendSerializedInput(currentInput);
-	//}
-
-	// catch if there are any errors, either validation or argument error
-
+	this->userInputs[inputAlias] = userInput;
 }
 
 Controller::Controller()
@@ -88,6 +81,7 @@ Controller::Controller()
 	strcpy(this->controllerName, "NO_CONTROLLER");
 	this->viewChunk = "";
 	this->controllerAttributions = {};
+	this->userInputs = {};
 }
 
 Controller::Controller(char *viewName, string &viewChunk, string &ViewExtension)
@@ -99,6 +93,7 @@ Controller::Controller(char *viewName, string &viewChunk, string &ViewExtension)
 	strcpy(this->controllerName, controllerName.c_str());
 	this->viewChunk = viewChunk;
 	this->controllerAttributions = {};
+	this->userInputs = {};
 
 	(this->hasInput(viewChunk) || this->hasOutput(viewChunk)) ? this->prepareView() : this->justShow();
 }
@@ -137,12 +132,12 @@ void Controller::operator=(const Controller &controller)
 	this->controllerAttributions = controller.controllerAttributions;
 }
 
-bool Controller::hasInput(string &raw)
+bool Controller::hasInput(const string &raw)
 {
 	return raw.find(Controller::viewInputFormat) != string::npos;
 }
 
-bool Controller::hasOutput(string &raw)
+bool Controller::hasOutput(const string &raw)
 {
 	return raw.find(Controller::viewOutputFormat) != string::npos;
 }

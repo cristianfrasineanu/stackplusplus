@@ -4,8 +4,8 @@
 #include <map>
 
 #include "Helpers.h"
-#include "Entity.h"
-#include "User.h"
+#include "RepositoryInterface.h"
+#include "UserRepository.h"
 
 using namespace std;
 
@@ -14,18 +14,18 @@ private:
 	static string userModelAlias;
 	static string questionModelAlias;
 
-	vector<string> accessHistory;
-	map<string, string> ready;
+	map<string, string> rawInput;
+	map<string, string> serializedInput;
 
-	EntityInterface *currentModel;
+	RepositoryInterface *repository;
 
-	string parseModelName(string);
-	void attachModel(string &);
+	string parseEntityName(string);
+	void attachEntity(string &);
+	void sendSerializedInput();
 public:
 	Model();
 
-	void sendSerializedInput(map<string, string> &);
-	void confirmInput();
+	void confirmInput(const map<string, string> &);
 
 	~Model();
 };

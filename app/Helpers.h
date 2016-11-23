@@ -11,7 +11,7 @@
 using namespace std;
 
 template<typename T>
-inline void log(T &data, char *identifiedBy, char *when)
+inline void log(const T &data, char *identifiedBy, char *when)
 {
 	cout << endl << "---*****LOGGER*****---" << endl
 		<< identifiedBy << " was " << data << " when " << when << endl
@@ -44,8 +44,8 @@ inline void log(map<FirstT, SecondT> &data, char *identifiedBy, char *when)
 		<< "---*****LOGGER*****---" << endl << endl;
 }
 
-template<typename V>
-inline bool isInVector(vector<V> &haystack, V needle)
+template<typename V, typename N>
+inline bool isInVector(vector<V> &haystack, N needle)
 {
 	return find(haystack.begin(), haystack.end(), needle) != haystack.end();
 }
