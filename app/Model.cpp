@@ -32,18 +32,18 @@ Model::Model()
 void Model::sendSerializedInput()
 {
 	// There's interaction with only one model on the view.
-	string modelName = this->parseEntityName(this->rawInput.begin()->first),
+	string entityName = this->parseEntityName(this->rawInput.begin()->first),
 		inputAlias;
 
 	if (this->repository == NULL)
 	{
-		this->attachEntity(modelName);
+		this->attachEntity(entityName);
 	}
 
 	for (map<string, string>::iterator it = this->rawInput.begin(); it != this->rawInput.end(); it++)
 	{
 		inputAlias = it->first;
-		inputAlias.erase(0, modelName.size() + 1);
+		inputAlias.erase(0, entityName.size() + 1);
 
 		this->serializedInput[inputAlias] = it->second;
 	}

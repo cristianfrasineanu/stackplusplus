@@ -2,38 +2,39 @@
 
 void UserRepository::defineValidation()
 {
+	// Stand back, I am going to try Regex!
 	this->ValidationRules = {
-		{ "username", "^(?=.{8,19}([a-zA-Z0-9]+)$)(?![^a-zA-Z])(?!.*[!_\45.]{2})[a-zA-Z0-9.\45_]+$" },
-		{ "password", "^(?=.{5,16}$)(?=.*[A-Z])(?=.*[0-9])(?=.*[!\45_@.$#])[a-zA-Z0-9!\45_@.$#]+$" }
+		{ "fullname", "^(?=.*(?:[\\s\\-])([a-zA-Z]+\\s?)+)([a-zA-Z]+)(?:[\\s\\-]).*$" },
+		{ "email", "^(?!.*[._]{2})[a-z0-9._]+@[a-z0-9]+(\\.[a-z]{1,3}){1,2}$" },
+		{ "username", "^(?=.{7,19}$)(?![^a-zA-Z0-9])(?!.*[!_\\-\\.]{2})[a-zA-Z0-9\\.\\-_]+$" },
+		{ "password", "^(?=.{5,16}$)(?=.*[A-Z])(?=.*[0-9])(?=.*[!\\-_@.$#])[a-zA-Z0-9!\\-_@.$#]+$" }
 	};
 
 	this->ValidationErrors = {
+		{ "fullname", "Please enter a valid firstname and lastname." },
+		{ "email", "Please enter a valid email address." },
 		{ "username", "Your username should have 8-20 characters, should start only with a letter, doesn't repeat special characters and finishes with a letter or a number." },
-		{ "password", "Your password should habe 6-16 characters, and contain an uppercase letter, a number and a special character." }
+		{ "password", "Your password should habe 5-16 characters, and contain an uppercase letter, a number and a special character." },
 	};
 }
 
 UserRepository::UserRepository()
 {
 	this->defineValidation();
+	this->model = new UserModel();
 }
 
 void UserRepository::receiveCleanInput(map<string, string> &cleanInput)
 {
 	log(cleanInput, "cleanInput", "after validation");
-	// Load the record into the model
-}
 
-void UserRepository::writeNewRecord()
-{
-	//
+	this->model->setAttributes(cleanInput);
+	this->model->save();
 }
 
 void UserRepository::validateItems(map<string, string> &serializedInput)
 {
-	map<string, string> serializedCopy = serializedInput;
-
-	for (map<string, string>::iterator it = serializedCopy.begin(); it != serializedCopy.end(); it++)
+	for (map<string, string>::iterator it = serializedInput.begin(); it != serializedInput.end(); it++)
 	{
 		try
 		{
@@ -63,6 +64,11 @@ void UserRepository::retrieveItemForActive()
 void UserRepository::retrieveAll()
 {
 	// Print everything
+}
+
+UserRepository::~UserRepository()
+{
+	delete this->model;
 }
 
 

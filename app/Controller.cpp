@@ -69,7 +69,7 @@ void Controller::prepareViewInput(const string &subChunk, const string &inputAli
 	map<string, string> currentInput;
 
 	cout << subChunk << " ";
-	cin >> userInput;
+	getline(cin, userInput);
 	cout << endl;
 
 	this->userInputs[inputAlias] = userInput;
@@ -122,12 +122,9 @@ void Controller::chopChunkAndGetAlias(string &chunk)
 // Don't assign multiple Controllers, stupid.
 void Controller::operator=(const Controller &controller)
 {
-	if (controller.controllerName != NULL)
-	{
-		delete[] this->controllerName;
-		this->controllerName = new char[strlen(controller.controllerName) + 1];
-		strcpy(this->controllerName, controller.controllerName);
-	}
+	delete[] this->controllerName;
+	this->controllerName = new char[strlen(controller.controllerName) + 1];
+	strcpy(this->controllerName, controller.controllerName);
 	this->viewChunk = controller.viewChunk;
 	this->controllerAttributions = controller.controllerAttributions;
 }

@@ -1,29 +1,29 @@
 #pragma once
 
-#include <string>
-#include <map>
-
 #include "Helpers.h"
+#include "ModelInterface.h"
 
 using namespace std;
 
-//---Entity---
-//------------
-// This entity acts like a repository interface between the accessor model and the actual model.
+//---Repository---
+//----------------
+// This entity acts like a glue between the accessor model and the actual model.
 // An example would be if we want to get all the records for a certain model.
 // The controller sends the request, the accessor model determines which model is needed and through
-// the repostory calls the methods responsible for retrieveing the data.
+// the repository it calls the methods responsible for retrieving your data.
 class RepositoryInterface {
 private:
 	virtual void defineValidation() = 0;
+	virtual void receiveCleanInput(map<string, string> &) = 0;
 protected:
 	map<string, string> ValidationRules;
 	map<string, string> ValidationErrors;
-	virtual void receiveCleanInput(map<string, string> &) = 0;
-public:
-	virtual void writeNewRecord() = 0;
-	virtual void validateItems(map<string, string> &) = 0;
 
+	ModelInterface *model;
+public:
+	virtual void validateItems(map<string, string> &) = 0;
 	virtual void retrieveItemForActive() = 0;
 	virtual void retrieveAll() = 0;
+
+	virtual ~RepositoryInterface();
 };

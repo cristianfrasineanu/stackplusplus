@@ -148,15 +148,20 @@
     <ClCompile Include="Controller.cpp" />
     <ClCompile Include="Helpers.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="ModelInterface.cpp" />
+    <ClCompile Include="RepositoryInterface.cpp" />
+    <ClCompile Include="UserModel.cpp" />
     <ClCompile Include="UserRepository.cpp" />
     <ClCompile Include="View.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Console.h" />
     <ClInclude Include="Controller.h" />
+    <ClInclude Include="ModelInterface.h" />
     <ClInclude Include="RepositoryInterface.h" />
     <ClInclude Include="Helpers.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="UserModel.h" />
     <ClInclude Include="UserRepository.h" />
     <ClInclude Include="View.h" />
   </ItemGroup>

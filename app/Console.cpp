@@ -118,6 +118,8 @@ void Console::loadViews(const fs::path &viewsFolder)
 void Console::loadActions()
 {
 	// TODO: load actions via config file
+	// The confirm is basically linked to the next view.
+	// For instance, the login view will have then next view the dashboard.
 	vector<char> actions = { 'q', 'b', 'n', 'c' };
 
 	this->actions = actions;
@@ -137,7 +139,8 @@ void Console::handleView()
 		buffer << viewFile.rdbuf();
 		this->currentView.setRawFormat(buffer.str());
 
-		// If there's any validation error inside the model
+		// If there's any validation error catch it and reload the view.
+		// TODO: Fix the memory leak when catching an error.
 		try
 		{
 			this->theController = Controller(this->currentView.getViewName(), buffer.str(), View::getViewExtension());
