@@ -56,6 +56,22 @@ inline bool isInMap(map<FirstT, SecondT> &haystack, FirstT needle)
 	return haystack.find(needle) != haystack.end();
 }
 
+template<typename V>
+inline void printVector(vector<V> &v, string &message)
+{
+	if (message != "")
+	{
+		cout << message
+			<< endl;
+	}
+
+	for (vector<V>::iterator it = v.begin(); it != v.end(); it++)
+	{
+		cout << (*it)
+			<< endl;
+	}
+}
+
 void toLowerCase(string &);
 void sleepAndClearBuffer(unsigned delay);
 void clearScreen();

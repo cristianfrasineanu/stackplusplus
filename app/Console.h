@@ -1,9 +1,8 @@
-#include <iostream>
-#include <fstream>
+#pragma once
+
 #include <sstream>
 #include <stdexcept>
 #include <filesystem>
-#include <map>
 
 #include "Helpers.h"
 #include "View.h"
@@ -30,25 +29,21 @@ private:
 
 	void loadViews(const fs::path &);
 	void loadActions();
+	void renderNextView();
+	void handleView();
+	void renderPreviousView();
 public:
 	Console();
 	Console(char *);
 
-	vector<char> &getActions();
 	char getLastInput();
-	string &getViewsFolder();
-
 	void setLastInput(char);
-	bool takeActionIfAny();
+	void takeActionOrNext();
 	bool shouldExit();
 	void breakTheLoop();
 
 	void showPrompt();
 	unsigned getDelay();
-
-	void handleView();
-	void renderNextView();
-	void renderPreviousView();
 	void reloadView();
 
 	~Console();

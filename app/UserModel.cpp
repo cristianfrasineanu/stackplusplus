@@ -1,5 +1,6 @@
 #include "UserModel.h"
 
+// Serialize the object when writing a new record.
 void UserModel::save()
 {
 	//this->io.write(reinterpret_cast<char *>(&this->User), sizeof(this->User));
@@ -50,11 +51,11 @@ UserModel::~UserModel()
 string UserModel::pathToFile = "..\\database\\users.store";
 void UserModel::openIOStream()
 {
-	this->io.open(UserModel::pathToFile, ios::in | ios::out | ios::app | ios::binary);
+	this->io.open(UserModel::pathToFile, ios::in | ios::out | ios::binary | ios::app);
 
 	if (!this->io.is_open())
 	{
-		cout << "Couldn't open " + UserModel::pathToFile;
+		cout << "Couldn't open the file stream to " + UserModel::pathToFile;
 	}
 }
 

@@ -1,3 +1,5 @@
+#pragma once
+
 #include <fstream>
 
 #include "Helpers.h"
@@ -9,6 +11,7 @@ class Controller {
 private:
 	static string viewInputFormat;
 	static string viewOutputFormat;
+	static vector<string> errorsBag;
 
 	char *controllerName;
 	vector<string> controllerAttributions;
@@ -21,6 +24,9 @@ private:
 	void prepareViewInput(const string &, const string &);
 	// TODO: take the chunk one by one for output and request output from model for each output variable
 public:
+	static void setErrorsBag(vector<string> &);
+	static vector<string> getErrorsBag();
+
 	Controller();
 	Controller(char *, string &, string &);
 

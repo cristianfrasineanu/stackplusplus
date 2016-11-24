@@ -5,6 +5,8 @@
 string Controller::viewInputFormat = "@input-";
 string Controller::viewOutputFormat = "@output-";
 
+vector<string> Controller::errorsBag = {};
+
 void Controller::justShow()
 {
 	cout << this->viewChunk
@@ -49,14 +51,14 @@ void Controller::prepareView()
 		}
 	}
 
-	// Show the rest
+	// Show the rest.
 	if (copyChunk.size())
 	{
 		cout << copyChunk
 			<< endl;
 	}
 
-	// Send the payload to be validated and handled by the main model
+	// Send the payload to the accessor model to be passed to the according repository.
 	if (isInVector(this->controllerAttributions, "input"))
 	{
 		this->model.confirmInput(this->userInputs);
@@ -73,6 +75,16 @@ void Controller::prepareViewInput(const string &subChunk, const string &inputAli
 	cout << endl;
 
 	this->userInputs[inputAlias] = userInput;
+}
+
+void Controller::setErrorsBag(vector<string> &errorsBag)
+{
+	Controller::errorsBag = errorsBag;
+}
+
+vector<string> Controller::getErrorsBag()
+{
+	return Controller::errorsBag;
 }
 
 Controller::Controller()
@@ -119,7 +131,7 @@ void Controller::chopChunkAndGetAlias(string &chunk)
 	chunk.erase(0, chunk.find(inputAlias) + inputAlias.size() + 2);
 }
 
-// Don't assign multiple Controllers, stupid.
+// Don't assign it multiple times, stupid.
 void Controller::operator=(const Controller &controller)
 {
 	delete[] this->controllerName;

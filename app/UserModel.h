@@ -1,4 +1,5 @@
-#include <iostream>
+#pragma once
+
 #include <regex>
 #include <iomanip>
 #include <ctime>

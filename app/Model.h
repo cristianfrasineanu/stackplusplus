@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Helpers.h"
 #include "RepositoryInterface.h"
 #include "UserRepository.h"
@@ -6,17 +8,13 @@ using namespace std;
 
 class Model {
 private:
-	static string userModelAlias;
-	static string questionModelAlias;
-
 	map<string, string> rawInput;
-	map<string, string> serializedInput;
+	map<string, string> truncatedInput;
 
 	RepositoryInterface *repository;
 
 	string parseEntityName(string);
 	void attachEntity(string &);
-	void sendSerializedInput();
 public:
 	Model();
 

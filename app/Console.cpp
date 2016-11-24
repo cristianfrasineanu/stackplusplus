@@ -17,12 +17,13 @@ Console::Console()
 	map<char, string> availableOptions = View::getViewsOptions().find(Console::initialView)->second;
 	this->previousViews = {};
 
-	this->currentView = View(Console::initialView, availableOptions);
 	this->delay = 2000;
 	this->loadActions();
 	this->loadViews(Console::viewsFolder);
 
-	if (find(this->loadedViews.begin(), this->loadedViews.end(), this->currentView.getViewName()) != this->loadedViews.end())
+	this->currentView = View(Console::initialView, availableOptions);
+
+	if (isInVector(this->loadedViews, Console::initialView))
 	{
 		this->handleView();
 	}
@@ -44,12 +45,13 @@ Console::Console(char *mode)
 	map<char, string> availableOptions = View::getViewsOptions().find(Console::initialView)->second;
 	this->previousViews = {};
 
-	this->currentView = View(viewName, availableOptions);
 	this->delay = 2000;
 	this->loadActions();
 	this->loadViews(Console::viewsFolder);
 
-	if (find(this->loadedViews.begin(), this->loadedViews.end(), this->currentView.getViewName()) != this->loadedViews.end())
+	this->currentView = View(viewName, availableOptions);
+
+	if (isInVector(this->loadedViews, viewName))
 	{
 		this->handleView();
 	}
@@ -72,11 +74,6 @@ void Console::setLastInput(char input)
 	}
 }
 
-vector<char> &Console::getActions()
-{
-	return this->actions;
-}
-
 void Console::showPrompt()
 {
 	cout << endl
@@ -86,11 +83,6 @@ void Console::showPrompt()
 char Console::getLastInput()
 {
 	return this->lastInput;
-}
-
-string & Console::getViewsFolder()
-{
-	return Console::viewsFolder;
 }
 
 void Console::loadViews(const fs::path &viewsFolder)
@@ -118,8 +110,6 @@ void Console::loadViews(const fs::path &viewsFolder)
 void Console::loadActions()
 {
 	// TODO: load actions via config file
-	// The confirm is basically linked to the next view.
-	// For instance, the login view will have then next view the dashboard.
 	vector<char> actions = { 'q', 'b', 'n', 'c' };
 
 	this->actions = actions;
@@ -132,24 +122,21 @@ void Console::handleView()
 	path.append("\\").append(this->currentView.getViewName());
 
 	stringstream buffer;
-	ifstream viewFile(path, ios::out);
+	ifstream viewFile(path, ios::in);
 
 	if (viewFile.is_open())
 	{
 		buffer << viewFile.rdbuf();
 		this->currentView.setRawFormat(buffer.str());
 
+		vector<string> emptyErrorBag = {};
+		Controller::setErrorsBag(emptyErrorBag);
+
 		// If there's any validation error catch it and reload the view.
-		// TODO: Fix the memory leak when catching an error.
-		try
-		{
-			this->theController = Controller(this->currentView.getViewName(), buffer.str(), View::getViewExtension());
-		}
-		catch (const invalid_argument &e)
-		{
-			cout << endl
-				<< e.what()
-				<< endl;
+		this->theController = Controller(this->currentView.getViewName(), buffer.str(), View::getViewExtension());
+		if (!Controller::getErrorsBag().empty()) {
+			string message = "\nPlease correct the following: ";
+			printVector(Controller::getErrorsBag(), message);
 
 			sleepAndClearBuffer(3 * this->delay);
 			this->reloadView();
@@ -195,9 +182,9 @@ void Console::reloadView()
 	this->handleView();
 }
 
-bool Console::takeActionIfAny()
+void Console::takeActionOrNext()
 {
-	if (isInVector(this->getActions(), this->lastInput))
+	if (isInVector(this->actions, this->lastInput))
 	{
 		switch (this->lastInput)
 		{
@@ -216,9 +203,11 @@ bool Console::takeActionIfAny()
 			default:
 				break;
 		}
-		return true;
 	}
-	return false;
+	else
+	{
+		this->renderNextView();
+	}
 }
 
 bool Console::shouldExit()

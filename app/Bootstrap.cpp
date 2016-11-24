@@ -14,10 +14,7 @@ void main()
 			{
 				console.showPrompt();
 				console.setLastInput(_getch());
-				if (console.takeActionIfAny() == false)
-				{
-					console.renderNextView();
-				}
+				console.takeActionOrNext();
 			}
 			catch (const invalid_argument &e)
 			{

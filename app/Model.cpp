@@ -8,29 +8,31 @@ string Model::parseEntityName(string inputAlias)
 void Model::attachEntity(string &model)
 {
 	toLowerCase(model);
-	if (model == "user")
+	if (model == UserRepository::getAlias())
 	{
 		this->repository = new UserRepository();
 	}
-	else if (model == "question")
+	/*else if (model == "question")
 	{
 
 	}
 	else if (model == "category")
 	{
 
-	}
+	}*/
 }
 
 Model::Model()
 {
 	this->repository = NULL;
 	this->rawInput = {};
-	this->serializedInput = {};
+	this->truncatedInput = {};
 }
 
-void Model::sendSerializedInput()
+void Model::confirmInput(const map<string, string> &payLoad)
 {
+	this->rawInput = payLoad;
+
 	// There's interaction with only one model on the view.
 	string entityName = this->parseEntityName(this->rawInput.begin()->first),
 		inputAlias;
@@ -45,17 +47,11 @@ void Model::sendSerializedInput()
 		inputAlias = it->first;
 		inputAlias.erase(0, entityName.size() + 1);
 
-		this->serializedInput[inputAlias] = it->second;
+		this->truncatedInput[inputAlias] = it->second;
 	}
 
-	// Sanitize the input, if there are any errors, display them and reload the view.
-	this->repository->validateItems(this->serializedInput);
-}
-
-void Model::confirmInput(const map<string, string> &payLoad)
-{
-	this->rawInput = payLoad;
-	this->sendSerializedInput();
+	// Validate the input, if there are any errors, display them and reload the view.
+	this->repository->validateItems(this->truncatedInput);
 }
 
 Model::~Model()

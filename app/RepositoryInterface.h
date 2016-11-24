@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Helpers.h"
+
 #include "ModelInterface.h"
 
 using namespace std;
@@ -20,6 +21,8 @@ protected:
 	map<string, string> ValidationErrors;
 
 	ModelInterface *model;
+
+	vector<string> errorsBag;
 public:
 	virtual void validateItems(map<string, string> &) = 0;
 	virtual void retrieveItemForActive() = 0;

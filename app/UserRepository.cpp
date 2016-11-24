@@ -1,4 +1,7 @@
 #include "UserRepository.h"
+#include "Controller.h"
+
+string UserRepository::alias = "user";
 
 void UserRepository::defineValidation()
 {
@@ -11,11 +14,13 @@ void UserRepository::defineValidation()
 	};
 
 	this->ValidationErrors = {
-		{ "fullname", "Please enter a valid firstname and lastname." },
-		{ "email", "Please enter a valid email address." },
-		{ "username", "Your username should have 8-20 characters, should start only with a letter, doesn't repeat special characters and finishes with a letter or a number." },
-		{ "password", "Your password should habe 5-16 characters, and contain an uppercase letter, a number and a special character." },
+		{ "fullname", "Invalid full name." },
+		{ "email", "Invalid email address." },
+		{ "username", "Username should be 8-20 characters long, should start only with a letter and should not repeat special characters." },
+		{ "password", "Password should be 5-16 characters long, and contain at least an uppercase letter, a number and a special character." },
 	};
+
+	this->errorsBag = {};
 }
 
 UserRepository::UserRepository()
@@ -26,21 +31,24 @@ UserRepository::UserRepository()
 
 void UserRepository::receiveCleanInput(map<string, string> &cleanInput)
 {
-	log(cleanInput, "cleanInput", "after validation");
-
 	this->model->setAttributes(cleanInput);
 	this->model->save();
 }
 
-void UserRepository::validateItems(map<string, string> &serializedInput)
+string &UserRepository::getAlias()
 {
-	for (map<string, string>::iterator it = serializedInput.begin(); it != serializedInput.end(); it++)
+	return UserRepository::alias;
+}
+
+void UserRepository::validateItems(map<string, string> &truncatedInput)
+{
+	for (map<string, string>::iterator it = truncatedInput.begin(); it != truncatedInput.end(); it++)
 	{
 		try
 		{
 			if (!regex_match(it->second.c_str(), regex(this->ValidationRules[it->first.c_str()])))
 			{
-				throw invalid_argument(this->ValidationErrors[it->first.c_str()]);
+				this->errorsBag.push_back(this->ValidationErrors[it->first.c_str()]);
 			}
 		}
 		catch (const regex_error &e)
@@ -53,22 +61,27 @@ void UserRepository::validateItems(map<string, string> &serializedInput)
 		}
 	}
 
-	this->receiveCleanInput(serializedInput);
+	// If there are no errors, send it along.
+	if (this->errorsBag.empty())
+	{
+		this->receiveCleanInput(truncatedInput);
+	}
+
+	// Let the console know about the errors.
+	Controller::setErrorsBag(this->errorsBag);
 }
 
 void UserRepository::retrieveItemForActive()
 {
-	// Search for the record having active set to true
+	// Search for the record having active set to true.
 }
 
 void UserRepository::retrieveAll()
 {
-	// Print everything
+	// Print everything.
 }
 
 UserRepository::~UserRepository()
 {
 	delete this->model;
 }
-
-
