@@ -20,7 +20,7 @@ void UserRepository::defineValidation()
 		{ "password", "Password should be 5-16 characters long, and contain at least an uppercase letter, a number and a special character." },
 	};
 
-	this->errorsBag = {};
+	this->errorBag = {};
 }
 
 UserRepository::UserRepository()
@@ -48,7 +48,7 @@ void UserRepository::validateItems(map<string, string> &truncatedInput)
 		{
 			if (!regex_match(it->second.c_str(), regex(this->ValidationRules[it->first.c_str()])))
 			{
-				this->errorsBag.push_back(this->ValidationErrors[it->first.c_str()]);
+				this->errorBag.push_back(this->ValidationErrors[it->first.c_str()]);
 			}
 		}
 		catch (const regex_error &e)
@@ -62,13 +62,13 @@ void UserRepository::validateItems(map<string, string> &truncatedInput)
 	}
 
 	// If there are no errors, send it along.
-	if (this->errorsBag.empty())
+	if (this->errorBag.empty())
 	{
 		this->receiveCleanInput(truncatedInput);
 	}
 
 	// Let the console know about the errors.
-	Controller::setErrorsBag(this->errorsBag);
+	Controller::setErrorsBag(this->errorBag);
 }
 
 void UserRepository::retrieveItemForActive()

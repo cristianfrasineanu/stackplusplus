@@ -73,5 +73,5 @@ inline void printVector(vector<V> &v, string &message)
 }
 
 void toLowerCase(string &);
-void sleepAndClearBuffer(unsigned delay);
+void sleepAndClearBuffer(unsigned);
 void clearScreen();

@@ -1,4 +1,5 @@
 #include "Console.h"
+#include <vld.h>
 
 using namespace std;
 

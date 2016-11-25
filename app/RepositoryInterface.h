@@ -22,7 +22,7 @@ protected:
 
 	ModelInterface *model;
 
-	vector<string> errorsBag;
+	vector<string> errorBag;
 public:
 	virtual void validateItems(map<string, string> &) = 0;
 	virtual void retrieveItemForActive() = 0;
