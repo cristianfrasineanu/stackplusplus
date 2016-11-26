@@ -57,19 +57,34 @@ inline bool isInMap(map<FirstT, SecondT> &haystack, FirstT needle)
 }
 
 template<typename V>
-inline void printVector(vector<V> &v, string &message)
+inline void printVector(vector<V> &v)
 {
-	if (message != "")
-	{
-		cout << message
-			<< endl;
-	}
-
 	for (vector<V>::iterator it = v.begin(); it != v.end(); it++)
 	{
 		cout << (*it)
 			<< endl;
 	}
+}
+
+template<typename T>
+inline void toast(T content, string &status)
+{
+	cout << endl << endl;
+
+	if (status == "success")
+	{
+		cout << "++ " << content;
+	}
+	else if (status == "error")
+	{
+		cout << "!! " << content;
+	}
+	else
+	{
+		cout << "** " << content;
+	}
+
+	cout << endl;
 }
 
 void toLowerCase(string &);

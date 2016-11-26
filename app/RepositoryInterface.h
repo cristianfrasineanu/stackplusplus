@@ -2,8 +2,6 @@
 
 #include "Helpers.h"
 
-#include "ModelInterface.h"
-
 using namespace std;
 
 //---Repository---
@@ -19,14 +17,8 @@ private:
 protected:
 	map<string, string> ValidationRules;
 	map<string, string> ValidationErrors;
-
-	ModelInterface *model;
-
-	vector<string> errorBag;
 public:
 	virtual void validateItems(map<string, string> &) = 0;
-	virtual void retrieveItemForActive() = 0;
-	virtual void retrieveAll() = 0;
 
 	virtual ~RepositoryInterface();
 };

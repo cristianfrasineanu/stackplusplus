@@ -7,28 +7,41 @@
 
 #include "ModelInterface.h"
 
+typedef struct {
+	int id;
+
+	char full_name[255] = "";
+	char email[255] = "";
+	char username[20] = "";
+	char password[17] = "";
+	char created_at[50] = "";
+
+	// Soft deletes
+	char deleted_at[50] = "";
+	char role[10] = "user";
+	bool active = 1;
+	bool banned = 0;
+} User;
+
 class UserModel : public ModelInterface {
 private:
 	static string pathToFile;
-	
-	struct {
-		char full_name[255] = "";
-		char email[255] = "";
-		char username[20] = "";
-		char password[17] = "";
-		char created_at[50] = "";
 
-		// Soft deletes
-		char deleted_at[50] = "";
-		char role[10] = "user";
-		bool active = 1;
-	} User;
+	User user;
 
 	void openIOStream();
+	void setLastId();
+
+	int fileSize;
+	int lastId;
 public:
 	// Open the IOStream and assign the protected attributes that shouldn't be changed by the user
 	UserModel();
 
+	//vector<User> getAll();
+	User getAfterUser(string &);
+	User getAfterId(int);
+	void markAs(string &, int);
 	void save();
 	void setAttributes(map<string, string> &);
 

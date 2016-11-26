@@ -9,9 +9,11 @@ using namespace std;
 
 class Controller {
 private:
-	static string viewInputFormat;
-	static string viewOutputFormat;
-	static vector<string> errorsBag;
+	static string userInputString;
+	static string outputString;
+	static string middlewareString;
+
+	static vector<string> errorBag;
 
 	char *controllerName;
 	vector<string> controllerAttributions;
@@ -24,8 +26,8 @@ private:
 	void prepareViewInput(const string &, const string &);
 	// TODO: take the chunk one by one for output and request output from model for each output variable
 public:
-	static void setErrorsBag(vector<string> &);
-	static vector<string> getErrorsBag();
+	static void pushError(string &);
+	static vector<string> getErrorBag();
 
 	Controller();
 	Controller(char *, string &, string &);

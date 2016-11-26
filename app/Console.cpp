@@ -110,7 +110,7 @@ void Console::loadViews(const fs::path &viewsFolder)
 void Console::loadActions()
 {
 	// TODO: load actions via config file
-	vector<char> actions = { 'q', 'b', 'n', 'c' };
+	vector<char> actions = { 'q', 'b', 'n' };
 
 	this->actions = actions;
 }
@@ -129,14 +129,11 @@ void Console::handleView()
 		buffer << viewFile.rdbuf();
 		this->currentView.setRawFormat(buffer.str());
 
-		vector<string> emptyErrorBag = {};
-		Controller::setErrorsBag(emptyErrorBag);
-
 		// If there's any validation error catch it and reload the view.
 		this->theController = Controller(this->currentView.getViewName(), buffer.str(), View::getViewExtension());
-		if (!Controller::getErrorsBag().empty()) {
-			string message = "\nPlease correct the following: ";
-			printVector(Controller::getErrorsBag(), message);
+		if (!Controller::getErrorBag().empty()) {
+			toast(string("There were some issues:"), string("error"));
+			printVector(Controller::getErrorBag());
 
 			sleepAndClearBuffer(3 * this->delay);
 			this->reloadView();
@@ -196,9 +193,6 @@ void Console::takeActionOrNext()
 				break;
 			case 'n':
 				// TODO: implement pagination for the questions index view
-				break;
-			case 'c':
-				// TODO: implement confirmation action for input decisions
 				break;
 			default:
 				break;

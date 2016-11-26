@@ -2,10 +2,11 @@
 
 //---Controller---
 //----------------
-string Controller::viewInputFormat = "@input-";
-string Controller::viewOutputFormat = "@output-";
+string Controller::userInputString = "@input-";
+string Controller::outputString = "@output-";
+string Controller::middlewareString = "@guard-";
 
-vector<string> Controller::errorsBag = {};
+vector<string> Controller::errorBag = {};
 
 void Controller::justShow()
 {
@@ -40,7 +41,7 @@ void Controller::prepareView()
 		}
 		else if (this->hasInput(copyChunk) || this->hasOutput(copyChunk))
 		{
-			if (copyChunk.find(Controller::viewInputFormat) < copyChunk.find(Controller::viewOutputFormat))
+			if (copyChunk.find(Controller::userInputString) < copyChunk.find(Controller::outputString))
 			{
 				this->chopChunkAndGetAlias(copyChunk);
 			}
@@ -77,14 +78,21 @@ void Controller::prepareViewInput(const string &subChunk, const string &inputAli
 	this->userInputs[inputAlias] = userInput;
 }
 
-void Controller::setErrorsBag(vector<string> &errorsBag)
+void Controller::pushError(string &error)
 {
-	Controller::errorsBag = errorsBag;
+	if (error == "")
+	{
+		Controller::errorBag = vector<string>({});
+	}
+	else
+	{
+		Controller::errorBag.push_back(error);
+	}
 }
 
-vector<string> Controller::getErrorsBag()
+vector<string> Controller::getErrorBag()
 {
-	return Controller::errorsBag;
+	return Controller::errorBag;
 }
 
 Controller::Controller()
@@ -123,10 +131,10 @@ char *Controller::getControllerName()
 void Controller::chopChunkAndGetAlias(string &chunk)
 {
 	// Splice the alias (take the part after the "-" in the template string).
-	string inputAlias = chunk.substr(chunk.find(Controller::viewInputFormat) + Controller::viewInputFormat.size(),
-									 chunk.find("\n", chunk.find(Controller::viewInputFormat)) - (chunk.find(Controller::viewInputFormat) + Controller::viewInputFormat.size()));
+	string inputAlias = chunk.substr(chunk.find(Controller::userInputString) + Controller::userInputString.size(),
+									 chunk.find("\n", chunk.find(Controller::userInputString)) - (chunk.find(Controller::userInputString) + Controller::userInputString.size()));
 
-	this->prepareViewInput(chunk.substr(0, chunk.find(Controller::viewInputFormat) - 1), inputAlias);
+	this->prepareViewInput(chunk.substr(0, chunk.find(Controller::userInputString) - 1), inputAlias);
 
 	chunk.erase(0, chunk.find(inputAlias) + inputAlias.size() + 2);
 }
@@ -137,18 +145,19 @@ void Controller::operator=(const Controller &controller)
 	delete[] this->controllerName;
 	this->controllerName = new char[strlen(controller.controllerName) + 1];
 	strcpy(this->controllerName, controller.controllerName);
+
 	this->viewChunk = controller.viewChunk;
 	this->controllerAttributions = controller.controllerAttributions;
 }
 
 bool Controller::hasInput(const string &raw)
 {
-	return raw.find(Controller::viewInputFormat) != string::npos;
+	return raw.find(Controller::userInputString) != string::npos;
 }
 
 bool Controller::hasOutput(const string &raw)
 {
-	return raw.find(Controller::viewOutputFormat) != string::npos;
+	return raw.find(Controller::outputString) != string::npos;
 }
 
 Controller::~Controller()

@@ -10,7 +10,8 @@ void UserRepository::defineValidation()
 		{ "fullname", "^(?=.*(?:[\\s\\-])([a-zA-Z]+\\s?)+)([a-zA-Z]+)(?:[\\s\\-]).*$" },
 		{ "email", "^(?!.*[._]{2})[a-z0-9._]+@[a-z0-9]+(\\.[a-z]{1,3}){1,2}$" },
 		{ "username", "^(?=.{7,19}$)(?![^a-zA-Z0-9])(?!.*[!_\\-\\.]{2})[a-zA-Z0-9\\.\\-_]+$" },
-		{ "password", "^(?=.{5,16}$)(?=.*[A-Z])(?=.*[0-9])(?=.*[!\\-_@.$#])[a-zA-Z0-9!\\-_@.$#]+$" }
+		{ "password", "^(?=.{5,16}$)(?=.*[A-Z])(?=.*[0-9])(?=.*[!\\-_@.$#])[a-zA-Z0-9!\\-_@.$#]+$" },
+		{ "logout", "^y|Y|n|N$" }
 	};
 
 	this->ValidationErrors = {
@@ -20,19 +21,59 @@ void UserRepository::defineValidation()
 		{ "password", "Password should be 5-16 characters long, and contain at least an uppercase letter, a number and a special character." },
 	};
 
-	this->errorBag = {};
+	Controller::pushError(string(""));
 }
 
 UserRepository::UserRepository()
 {
 	this->defineValidation();
-	this->model = new UserModel();
 }
 
 void UserRepository::receiveCleanInput(map<string, string> &cleanInput)
 {
-	this->model->setAttributes(cleanInput);
-	this->model->save();
+	this->model.setAttributes(cleanInput);
+
+	// TODO: find a way to log ou the user and change the views without providing further input after confirming.
+	if (cleanInput.find("logout") != cleanInput.end())
+	{
+		char choice[2];
+		strcpy(choice, cleanInput.find("logout")->second.c_str());
+		if ((char)tolower(choice[0]) == 'y')
+		{
+			//this->model.getActive();
+			//this->model.markAs(string("nonactive"))
+		}
+		else
+		{
+			// Go back
+		}
+	}
+	// If the user tries to login, compare the password with the one from the db.
+	else if (cleanInput.find("fullname") == cleanInput.end())
+	{
+		try
+		{
+			User user = this->model.getAfterUser(cleanInput.find("username")->second);
+			if (user.password == cleanInput.find("password")->second && user.banned != true && user.deleted_at == "")
+			{
+				this->model.markAs(string("active"), user.id);
+				toast("Login successful! Please press -c- confirm your access to the dashboard.", string("success"));
+			}
+			else
+			{
+				Controller::pushError(string("Incorrect password!"));
+			}
+		}
+		catch (const invalid_argument &e)
+		{
+			Controller::pushError(string(e.what()));
+		}
+	}
+	else
+	{
+		this->model.save();
+		toast("Account created successfully! Please press -c- confirm your access to the dashboard.", string("success"));
+	}
 }
 
 string &UserRepository::getAlias()
@@ -48,7 +89,7 @@ void UserRepository::validateItems(map<string, string> &truncatedInput)
 		{
 			if (!regex_match(it->second.c_str(), regex(this->ValidationRules[it->first.c_str()])))
 			{
-				this->errorBag.push_back(this->ValidationErrors[it->first.c_str()]);
+				Controller::pushError(this->ValidationErrors[it->first.c_str()]);
 			}
 		}
 		catch (const regex_error &e)
@@ -62,26 +103,12 @@ void UserRepository::validateItems(map<string, string> &truncatedInput)
 	}
 
 	// If there are no errors, send it along.
-	if (this->errorBag.empty())
+	if (Controller::getErrorBag().empty())
 	{
 		this->receiveCleanInput(truncatedInput);
 	}
-
-	// Let the console know about the errors.
-	Controller::setErrorsBag(this->errorBag);
-}
-
-void UserRepository::retrieveItemForActive()
-{
-	// Search for the record having active set to true.
-}
-
-void UserRepository::retrieveAll()
-{
-	// Print everything.
 }
 
 UserRepository::~UserRepository()
 {
-	delete this->model;
 }
