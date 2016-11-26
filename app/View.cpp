@@ -2,8 +2,8 @@
 
 //---View---
 //----------
-// A view has attached to it a range of available actions or verbs  
-// that are used by the console to do a certain action.
+// A view has attached to it a range of available actions 
+// that determine the flow of the app.
 map<string, map<char, string>> View::ViewsOptions = { { "",{ { '\0', "" } } } };
 string View::ViewExtenstion = ".view";
 
@@ -67,7 +67,7 @@ void View::loadViewsOptions()
 
 		{ dashboardView, { { 'q', "quit" }, { '4', "logout.view" } } },
 
-		{ logoutView, { { 'b', "back" } } },
+		{ logoutView, { { 'y', "confirm" }, { 'b', "back" } } },
 		 
 		{ faqView, { { 'q', "quit" }, { 'b', "back" } } },
 

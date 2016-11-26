@@ -1,5 +1,4 @@
 #include "Console.h"
-#include <vld.h>
 
 using namespace std;
 
@@ -19,7 +18,7 @@ void main()
 			}
 			catch (const invalid_argument &e)
 			{
-				cout << e.what();
+				toast(e.what(), string("error"));
 
 				sleepAndClearBuffer(console.getDelay());
 				console.reloadView();
@@ -28,16 +27,12 @@ void main()
 	}
 	catch (const invalid_argument &e)
 	{
-		cout << e.what()
-			<< endl;
+		toast(e.what(), string("error"));
 	}
 	catch (const system_error &e)
 	{
 		clearScreen();
 
-		cout << e.code()
-			<< " "
-			<< e.what()
-			<< endl;
+		toast(e.what(), string("error"));
 	}
 }

@@ -2,9 +2,9 @@
 
 //---Controller---
 //----------------
+// Well, just a general controller... not much to see here.
 string Controller::userInputString = "@input-";
 string Controller::outputString = "@output-";
-string Controller::middlewareString = "@guard-";
 
 vector<string> Controller::errorBag = {};
 
@@ -14,6 +14,7 @@ void Controller::justShow()
 		<< endl;
 }
 
+// Determine the order of the input/output from the user.
 void Controller::prepareView()
 {
 	string copyChunk = this->viewChunk;
@@ -27,7 +28,6 @@ void Controller::prepareView()
 		this->controllerAttributions.push_back("output");
 	}
 
-	// Determine the order of the input/output from the user.
 	while (this->hasInput(copyChunk) || this->hasOutput(copyChunk))
 	{
 		if (!this->hasOutput(copyChunk))
@@ -99,6 +99,7 @@ Controller::Controller()
 {
 	this->controllerName = new char[strlen("NO_CONTROLLER") + 1];
 	strcpy(this->controllerName, "NO_CONTROLLER");
+
 	this->viewChunk = "";
 	this->controllerAttributions = {};
 	this->userInputs = {};
@@ -111,6 +112,7 @@ Controller::Controller(char *viewName, string &viewChunk, string &ViewExtension)
 
 	this->controllerName = new char[controllerName.size() + 1];
 	strcpy(this->controllerName, controllerName.c_str());
+
 	this->viewChunk = viewChunk;
 	this->controllerAttributions = {};
 	this->userInputs = {};

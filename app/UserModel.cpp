@@ -4,17 +4,15 @@ User UserModel::getAfterUser(string &username)
 {
 	this->io.seekg(0, this->io.beg);
 
-	do
+	while (this->io.read(reinterpret_cast<char *>(&this->user), sizeof(User)))
 	{
-		this->io.read(reinterpret_cast<char *>(&this->user), sizeof(User));
-
 		if (this->user.username == username)
 		{
 			return this->user;
 		}
-	} while (!this->io.eof());
+	}
 
-	throw("Username not found!");
+	throw invalid_argument("Username not found!");
 }
 
 User UserModel::getAfterId(int id)
@@ -23,6 +21,21 @@ User UserModel::getAfterId(int id)
 	this->io.read(reinterpret_cast<char *>(&this->user), sizeof(User));
 
 	return this->user;
+}
+
+User UserModel::getActive()
+{
+	this->io.seekg(0, this->io.beg);
+
+	while (this->io.read(reinterpret_cast<char *>(&this->user), sizeof(User)))
+	{
+		if (this->user.active == true)
+		{
+			return this->user;
+		}
+	}
+
+	throw exception("No active user!");
 }
 
 void UserModel::markAs(string &status, int id)
@@ -34,7 +47,7 @@ void UserModel::markAs(string &status, int id)
 	this->save();
 }
 
-// Serialize the object when saving a user.
+// Serialize the object.
 void UserModel::save()
 {
 	this->io.seekp((this->user.id - 1) * sizeof(User), this->io.beg);
@@ -77,6 +90,36 @@ void UserModel::setAttributes(map<string, string> &cleanInputs)
 	this->user.id = ++this->lastId;
 }
 
+void UserModel::dumpFile()
+{
+	User user;
+
+	ifstream db(UserModel::pathToFile, ios::in | ios::binary);
+	ofstream dump((UserModel::pathToFile.substr(0, UserModel::pathToFile.find(".store")).append(".txt")), ios::out | ios::trunc);
+
+	if (db.is_open() && dump.is_open())
+	{
+		db.seekg(0, db.beg);
+
+		while (db.read(reinterpret_cast<char *>(&user), sizeof(User)))
+		{
+			dump << user.id << endl
+				<< user.full_name << endl
+				<< user.email << endl
+				<< user.username << endl
+				<< user.password << endl
+				<< user.created_at << endl
+				<< user.deleted_at << endl
+				<< user.role << endl
+				<< user.active << endl
+				<< user.banned << endl << endl;
+		}
+
+		db.close();
+		dump.close();
+	}
+}
+
 UserModel::~UserModel()
 {
 	this->io.close();
@@ -103,12 +146,10 @@ void UserModel::setLastId()
 	}
 	else
 	{
-		User lastUser;
-
 		this->io.seekg((this->fileSize / sizeof(User) - 1) * sizeof(User), this->io.beg);
-		this->io.read(reinterpret_cast<char *>(&lastUser), sizeof(lastUser));
+		this->io.read(reinterpret_cast<char *>(&this->user), sizeof(User));
 
-		this->lastId = lastUser.id;
+		this->lastId = this->user.id;
 	}
 }
 

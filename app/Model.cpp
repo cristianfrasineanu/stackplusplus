@@ -29,11 +29,11 @@ Model::Model()
 	this->truncatedInput = {};
 }
 
+// Pass the payload along to the repository in order to be validated.
 void Model::confirmInput(const map<string, string> &payLoad)
 {
 	this->rawInput = payLoad;
 
-	// There's interaction with only one model on the view.
 	string entityName = this->parseEntityName(this->rawInput.begin()->first),
 		inputAlias;
 

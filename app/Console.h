@@ -20,6 +20,7 @@ private:
 	char lastInput;
 	unsigned delay;
 	bool exit;
+
 	View currentView;
 	Controller theController;
 	vector<View> previousViews;
@@ -29,9 +30,12 @@ private:
 
 	void loadViews(const fs::path &);
 	void loadActions();
+
 	void renderNextView();
-	void handleView();
+	void renderNextView(string &);
+
 	void renderPreviousView();
+	void handleView();
 public:
 	Console();
 	Console(char *);
@@ -44,6 +48,7 @@ public:
 
 	void showPrompt();
 	unsigned getDelay();
+
 	void reloadView();
 
 	~Console();

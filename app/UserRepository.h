@@ -15,6 +15,7 @@ private:
 	void receiveCleanInput(map<string, string> &);
 public:
 	static string &getAlias();
+	static void logOutUser();
 
 	UserRepository();
 

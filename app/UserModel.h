@@ -32,15 +32,16 @@ private:
 	void openIOStream();
 	void setLastId();
 
-	int fileSize;
+	long long fileSize;
 	int lastId;
 public:
-	// Open the IOStream and assign the protected attributes that shouldn't be changed by the user
+	static void dumpFile();
 	UserModel();
 
-	//vector<User> getAll();
 	User getAfterUser(string &);
 	User getAfterId(int);
+	User getActive();
+
 	void markAs(string &, int);
 	void save();
 	void setAttributes(map<string, string> &);

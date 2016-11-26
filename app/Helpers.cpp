@@ -10,8 +10,7 @@ void sleepAndClearBuffer(unsigned delay)
 {
 	Sleep(delay);
 
-	// Clear the keyboard buffer during the sleep cycle (if there are any keys pressed), 
-	// so whatever keys are hit are discarded.
+	// Clear the keyboard buffer during the sleep cycle (if there are any keys pressed).
 	while (_kbhit())
 	{
 		_getch();

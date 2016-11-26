@@ -69,7 +69,7 @@ inline void printVector(vector<V> &v)
 template<typename T>
 inline void toast(T content, string &status)
 {
-	cout << endl << endl;
+	cout << endl;
 
 	if (status == "success")
 	{

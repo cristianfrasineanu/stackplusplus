@@ -10,8 +10,6 @@ Username: @input-User-username
 
 Password: @input-user-password
 
-*** Press -c- to confirm or -b- to go to the main menu. ***
-
 ===========================================================
 # (c) 2016 Cristian-Adrian Frasineanu | GNU GPLv3 licence #
 ===========================================================

@@ -2,8 +2,8 @@
 
 //---Console---
 //-------------
-// We need an initial state, because we don't have any means like mapping views to HTTP routes.
-// The Console class represents an entry point for all the other components, like View.
+// An initial state and a synchronous processing of the views is necessary due to the lack of console.
+// It acts like a glue between all other components of the framework.
 string Console::initialView = "home.view";
 string Console::viewsFolder = "..\\views";
 
@@ -110,7 +110,7 @@ void Console::loadViews(const fs::path &viewsFolder)
 void Console::loadActions()
 {
 	// TODO: load actions via config file
-	vector<char> actions = { 'q', 'b', 'n' };
+	vector<char> actions = { 'q', 'b', 'n', 'y' };
 
 	this->actions = actions;
 }
@@ -129,34 +129,47 @@ void Console::handleView()
 		buffer << viewFile.rdbuf();
 		this->currentView.setRawFormat(buffer.str());
 
-		// If there's any validation error catch it and reload the view.
 		this->theController = Controller(this->currentView.getViewName(), buffer.str(), View::getViewExtension());
-		if (!Controller::getErrorBag().empty()) {
+		if (!Controller::getErrorBag().empty())
+		{
 			toast(string("There were some issues:"), string("error"));
 			printVector(Controller::getErrorBag());
 
 			sleepAndClearBuffer(3 * this->delay);
 			this->reloadView();
 		}
+		// TODO: provide an option to the users to cancel what they want to do.
+		// i.e. show the errors and ask if they want to try again or go back.
 
 		buffer.clear();
 		viewFile.close();
 	}
 	else
 	{
-		string error_message = "The input stream from the view couldn't be opened.";
-		throw system_error(error_code(3, system_category()), error_message);
+		throw system_error(error_code(3, system_category()), string("The input stream from the view couldn't be opened."));
 	}
 }
 
+// Prepare the next view and also cache the current one.
 void Console::renderNextView()
 {
 	string nextView = this->currentView.getAvailableOptions().find(this->getLastInput())->second;
 	map<char, string> nextOptions = View::getViewsOptions().find(nextView)->second;
 
-	// Cache the current view
 	this->previousViews.push_back(this->currentView);
 	this->currentView = View(nextView, nextOptions);
+
+	clearScreen();
+	this->handleView();
+}
+
+// Render a custom view without caching the previous one as it breaks the normal flow.
+void Console::renderNextView(string &viewName)
+{
+	map<char, string> nextOptions = View::getViewsOptions().find(viewName)->second;
+
+	this->previousViews.erase(this->previousViews.begin(), this->previousViews.end());
+	this->currentView = View(viewName, nextOptions);
 
 	clearScreen();
 	this->handleView();
@@ -192,8 +205,12 @@ void Console::takeActionOrNext()
 				this->renderPreviousView();
 				break;
 			case 'n':
-				// TODO: implement pagination for the questions index view
+				// TODO: implement pagination
 				break;
+			case 'y':
+				UserRepository::logOutUser();
+				// TODO: Decouple this somehow
+				this->renderNextView(string(Console::initialView));
 			default:
 				break;
 		}
@@ -222,6 +239,9 @@ unsigned Console::getDelay()
 Console::~Console()
 {
 	delete[] this->mode;
+
+	// Dump all the records...
+	UserModel::dumpFile();
 
 	clearScreen();
 	cout << "Program exited the main console."
