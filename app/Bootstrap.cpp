@@ -4,35 +4,34 @@ using namespace std;
 
 void main()
 {
+	Console::initTerminal();
 	try
 	{
-		View::loadViewsOptions();
 		Console console;
 		do
 		{
 			try
 			{
 				console.showPrompt();
-				console.setLastInput(_getch());
+				console.setLastInput(getch());
 				console.takeActionOrNext();
 			}
 			catch (const invalid_argument &e)
 			{
-				toast(e.what(), string("error"));
+				toast(string(e.what()), string("error"));
 
 				sleepAndClearBuffer(console.getDelay());
-				console.reloadView();
+				clearPreviousLines(0);
 			}
 		} while (!console.shouldExit());
 	}
 	catch (const invalid_argument &e)
 	{
-		toast(e.what(), string("error"));
+		toast(string(e.what()), string("error"));
 	}
 	catch (const system_error &e)
 	{
 		clearScreen();
-
-		toast(e.what(), string("error"));
+		toast(string(e.what()), string("error"));
 	}
 }

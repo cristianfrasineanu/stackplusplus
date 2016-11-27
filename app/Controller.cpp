@@ -10,8 +10,8 @@ vector<string> Controller::errorBag = {};
 
 void Controller::justShow()
 {
-	cout << this->viewChunk
-		<< endl;
+	addstr(this->viewChunk.c_str());
+	printString("\n\n");
 }
 
 // Determine the order of the input/output from the user.
@@ -55,8 +55,7 @@ void Controller::prepareView()
 	// Show the rest.
 	if (copyChunk.size())
 	{
-		cout << copyChunk
-			<< endl;
+		addstr((copyChunk + "\n\n").c_str());
 	}
 
 	// Send the payload to the accessor model to be passed to the according repository.
@@ -71,9 +70,45 @@ void Controller::prepareViewInput(const string &subChunk, const string &inputAli
 	string userInput;
 	map<string, string> currentInput;
 
-	cout << subChunk << " ";
-	getline(cin, userInput);
-	cout << endl;
+	addstr((subChunk + " ").c_str());
+	refresh();
+
+	// Hide the input when typing any sensitive data.
+	if (inputAlias.find("password") != string::npos)
+	{
+		const char carriage_return = 10;
+		const char backspace = 8;
+
+		unsigned char ch = 0;
+		
+		noecho();
+		while ((ch = getch()) != carriage_return)
+		{
+			if (ch == backspace && userInput.size())
+			{
+				printw("\b \b");
+				refresh();
+				userInput.resize(userInput.size() - 1);
+			}
+			else if (ch != backspace)
+			{
+				userInput += ch;
+				printw("*");
+				refresh();
+			}
+		}
+		
+		// Re-enable input and render the previous carriage return.
+		echo();
+		printString("\n");
+	}
+	else
+	{
+		//getline(cin, userInput);
+		getString(userInput);
+	}
+
+	printString("\n");
 
 	this->userInputs[inputAlias] = userInput;
 }
@@ -109,6 +144,8 @@ Controller::Controller(char *viewName, string &viewChunk, string &ViewExtension)
 {
 	string controllerName = viewName;
 	controllerName.erase(controllerName.find(ViewExtension), ViewExtension.size()).append("Controller");
+
+	echo();
 
 	this->controllerName = new char[controllerName.size() + 1];
 	strcpy(this->controllerName, controllerName.c_str());
@@ -165,4 +202,6 @@ bool Controller::hasOutput(const string &raw)
 Controller::~Controller()
 {
 	delete[] this->controllerName;
+
+	noecho();
 }

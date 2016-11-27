@@ -30,7 +30,6 @@ UserRepository::UserRepository()
 
 // If the user tries to login, compare the password with the one from the db and mark it as active.
 // Determine which action it's taken based on the payload contents.
-// TODO: set noReload for console once the input was validated or the account was created.
 void UserRepository::receiveCleanInput(map<string, string> &cleanInput)
 {
 	this->model.setAttributes(cleanInput);
@@ -45,7 +44,8 @@ void UserRepository::receiveCleanInput(map<string, string> &cleanInput)
 				&& user.banned != true)
 			{
 				this->model.markAs(string("active"), user.id);
-				toast("Login successful! Please press -c- confirm your access to the dashboard.", string("success"));
+				toast(string("Login successful! Please press -c- confirm your access to the dashboard."), string("success"));
+				printString("\n");
 			}
 			else
 			{
@@ -59,7 +59,9 @@ void UserRepository::receiveCleanInput(map<string, string> &cleanInput)
 	}
 	else
 	{
-		toast("Account created successfully! Please press -c- confirm your access to the dashboard.", string("success"));
+		// TODO: check for user uniqueness when creating an account.
+		toast(string("Account created successfully! Please press -c- confirm your access to the dashboard."), string("success"));
+		printString("\n");
 	}
 
 	this->model.save();
@@ -82,7 +84,7 @@ void UserRepository::logOutUser()
 	}
 	catch (const exception &e)
 	{
-		toast(e.what(), string("error"));
+		toast(string(e.what()), string("error"));
 	}
 }
 
@@ -99,11 +101,7 @@ void UserRepository::validateItems(map<string, string> &truncatedInput)
 		}
 		catch (const regex_error &e)
 		{
-			cout << endl
-				<< e.what()
-				<< endl
-				<< e.code()
-				<< endl;
+			toast("\n\n" + string(e.what()) + "\n", string("error"));
 		}
 	}
 

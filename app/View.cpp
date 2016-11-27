@@ -61,11 +61,11 @@ void View::loadViewsOptions()
 
 		{ browseIndexView, { { 'q', "quit" }, { 'b', "back" } } },
 
-		{ loginView, { { 'b', "back" }, { 'c', "dashboard.view" } } },
+		{ loginView, { { 'c', "dashboard.view" } } },
 
-		{ signupView, { { 'b', "back" }, { 'c', "dashboard.view" } } },
+		{ signupView, { { 'c', "dashboard.view" } } },
 
-		{ dashboardView, { { 'q', "quit" }, { '4', "logout.view" } } },
+		{ dashboardView, { { '4', "logout.view" } } },
 
 		{ logoutView, { { 'y', "confirm" }, { 'b', "back" } } },
 		 

@@ -17,9 +17,9 @@ private:
 	static string viewsFolder;
 	
 	char *mode;
-	char lastInput;
-	unsigned delay;
-	bool exit;
+	unsigned delay = 2000;
+	char lastInput = '\0';
+	bool exit = false;
 
 	View currentView;
 	Controller theController;
@@ -37,6 +37,8 @@ private:
 	void renderPreviousView();
 	void handleView();
 public:
+	static void initTerminal();
+
 	Console();
 	Console(char *);
 
@@ -50,6 +52,7 @@ public:
 	unsigned getDelay();
 
 	void reloadView();
+	void provideRetry();
 
 	~Console();
 };

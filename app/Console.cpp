@@ -7,17 +7,53 @@
 string Console::initialView = "home.view";
 string Console::viewsFolder = "..\\views";
 
+// Prepare a standard screen that buffers all keys, doesn't echo input,
+// waits for the input and isn't affected by interrupt characters.
+void Console::initTerminal()
+{
+	initscr();
+
+	cbreak();
+	keypad(stdscr, TRUE);
+	noecho();
+	nodelay(stdscr, FALSE);
+	resize_term(150, 150);
+
+	// Scroll to the bottom if the content overflows.
+	scrollok(stdscr, TRUE);
+
+	start_color();
+	use_default_colors();
+
+	// Define color pairs to be assign to stdscr.
+	init_pair(1, COLOR_WHITE, COLOR_BLACK);
+
+	wbkgd(stdscr, COLOR_PAIR(1) | A_BOLD);
+	refresh();
+}
+
+void Console::showPrompt()
+{
+	printString(">> ");
+}
+
+void Console::loadActions()
+{
+	// TODO: load actions via config file
+	vector<char> actions = { 'q', 'b', 'n', 'y' };
+
+	this->actions = actions;
+}
+
 Console::Console()
 {
 	this->mode = new char[strlen("live") + 1];
-	this->lastInput = '\0';
 	strcpy(this->mode, "live");
-	this->exit = false;
 
+	View::loadViewsOptions();
 	map<char, string> availableOptions = View::getViewsOptions().find(Console::initialView)->second;
 	this->previousViews = {};
 
-	this->delay = 2000;
 	this->loadActions();
 	this->loadViews(Console::viewsFolder);
 
@@ -30,7 +66,7 @@ Console::Console()
 	else
 	{
 		string exceptionIntro = "Please specify an existing view (";
-		throw invalid_argument(exceptionIntro + this->currentView.getViewName() + ")");
+		throw invalid_argument(exceptionIntro + this->currentView.getViewName() + ")\n");
 	}
 }
 
@@ -38,14 +74,12 @@ Console::Console(char *mode)
 {
 	this->mode = new char[strlen("debug") + 1];
 	strcpy(this->mode, "debug");
-	this->lastInput = '\0';
-	this->exit = false;
 
 	string viewName = "debug.view";
-	map<char, string> availableOptions = View::getViewsOptions().find(Console::initialView)->second;
+	View::loadViewsOptions();
+	map<char, string> availableOptions = View::getViewsOptions().find(viewName)->second;
 	this->previousViews = {};
 
-	this->delay = 2000;
 	this->loadActions();
 	this->loadViews(Console::viewsFolder);
 
@@ -58,7 +92,7 @@ Console::Console(char *mode)
 	else
 	{
 		string exceptionIntro = "No debug view found: ";
-		throw invalid_argument(exceptionIntro + this->currentView.getViewName());
+		throw invalid_argument(exceptionIntro + this->currentView.getViewName() + ")\n");
 	}
 }
 
@@ -72,12 +106,6 @@ void Console::setLastInput(char input)
 	{
 		throw invalid_argument("Please provide a valid selection.");
 	}
-}
-
-void Console::showPrompt()
-{
-	cout << endl
-		<< ">> ";
 }
 
 char Console::getLastInput()
@@ -107,14 +135,6 @@ void Console::loadViews(const fs::path &viewsFolder)
 	}
 }
 
-void Console::loadActions()
-{
-	// TODO: load actions via config file
-	vector<char> actions = { 'q', 'b', 'n', 'y' };
-
-	this->actions = actions;
-}
-
 void Console::handleView()
 {
 	string content,
@@ -133,13 +153,13 @@ void Console::handleView()
 		if (!Controller::getErrorBag().empty())
 		{
 			toast(string("There were some issues:"), string("error"));
+			printString("\n");
 			printVector(Controller::getErrorBag());
 
-			sleepAndClearBuffer(3 * this->delay);
-			this->reloadView();
+			// Empty the bag and provide a retry step.
+			Controller::pushError(string(""));
+			this->provideRetry();
 		}
-		// TODO: provide an option to the users to cancel what they want to do.
-		// i.e. show the errors and ask if they want to try again or go back.
 
 		buffer.clear();
 		viewFile.close();
@@ -192,6 +212,25 @@ void Console::reloadView()
 	this->handleView();
 }
 
+void Console::provideRetry()
+{
+	printString("\n");
+	toast(string("Would you like to retry or go back? (Y/b)\n"), string("notification"));
+	this->showPrompt();
+	do
+	{
+		this->lastInput = (char)tolower(getch());
+		if (this->lastInput == 'y')
+		{
+			this->reloadView();
+		}
+		else if (this->lastInput == 'b')
+		{
+			this->renderPreviousView();
+		}
+	} while (this->lastInput != 'y' && this->lastInput != 'b');
+}
+
 void Console::takeActionOrNext()
 {
 	if (isInVector(this->actions, this->lastInput))
@@ -208,8 +247,8 @@ void Console::takeActionOrNext()
 				// TODO: implement pagination
 				break;
 			case 'y':
-				UserRepository::logOutUser();
 				// TODO: Decouple this somehow
+				UserRepository::logOutUser();
 				this->renderNextView(string(Console::initialView));
 			default:
 				break;
@@ -243,7 +282,16 @@ Console::~Console()
 	// Dump all the records...
 	UserModel::dumpFile();
 
+	// Revert to default terminal and display notice.
 	clearScreen();
-	cout << "Program exited the main console."
-		<< endl;
+	wbkgd(stdscr, COLOR_PAIR(1));
+	printString("Program exited the main console.\n");
+
+	// This or use the windows Sleep.
+	// Maybe better Sleep.
+	//timeout(this->delay);
+	getch();
+
+	endwin();
+	refresh();
 }
