@@ -241,5 +241,5 @@ ModelManifest.xml
 # FAKE - F# Make
 .fake/
 
-.database/*.store
-.database/*.txt
+/database/*.store
+/database/*.txt
