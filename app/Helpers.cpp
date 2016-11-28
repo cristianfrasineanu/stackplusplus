@@ -6,7 +6,7 @@ void toLowerCase(string &input)
 			  [](unsigned char ch) { return tolower(ch); });
 }
 
-void sleepAndClearBuffer(unsigned delay)
+void sleepAndFlushInput(unsigned delay)
 {
 	Sleep(delay);
 	flushinp();

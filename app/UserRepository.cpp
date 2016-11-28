@@ -10,7 +10,8 @@ void UserRepository::defineValidation()
 		{ "fullname", "^(?=.*(?:[\\s\\-])([a-zA-Z]+\\s?)+)([a-zA-Z]+)(?:[\\s\\-]).*$" },
 		{ "email", "^(?!.*[._]{2})[a-z0-9._]+@[a-z0-9]+(\\.[a-z]{1,3}){1,2}$" },
 		{ "username", "^(?=.{7,19}$)(?![^a-zA-Z0-9])(?!.*[!_\\-\\.]{2})[a-zA-Z0-9\\.\\-_]+$" },
-		{ "password", "^(?=.{5,16}$)(?=.*[A-Z])(?=.*[0-9])(?=.*[!\\-_@.$#])[a-zA-Z0-9!\\-_@.$#]+$" }
+		{ "password", "^(?=.{5,16}$)(?=.*[A-Z])(?=.*[0-9])(?=.*[!\\-_@.$#])[a-zA-Z0-9!\\-_@.$#]+$" },
+		{ "action", "^(?!.*\\W+)(?!.*[A-Z]+)[a-z]+$" }
 	};
 
 	this->ValidationErrors = {
@@ -34,7 +35,9 @@ void UserRepository::receiveCleanInput(map<string, string> &cleanInput)
 {
 	this->model.setAttributes(cleanInput);
 
-	if (cleanInput.find("fullname") == cleanInput.end())
+	string action = cleanInput.find("action")->second;
+
+	if (action == "login")
 	{
 		try
 		{
@@ -57,14 +60,24 @@ void UserRepository::receiveCleanInput(map<string, string> &cleanInput)
 			Controller::pushError(string(e.what()));
 		}
 	}
+	else if (action == "signup")
+	{
+		// Try finding the user and validate the request.
+		if (this->model.userExists(cleanInput.find("username")->second)) {
+			Controller::pushError(string("The username already exists!"));
+		}
+		else {
+			toast(string("Account created successfully! Please press -c- confirm your access to the dashboard."), string("success"));
+			printString("\n");
+
+			this->model.save();
+		}
+	}
 	else
 	{
-		// TODO: check for user uniqueness when creating an account.
-		toast(string("Account created successfully! Please press -c- confirm your access to the dashboard."), string("success"));
-		printString("\n");
+		Controller::pushError(string("Please provide a valid action!"));
 	}
-
-	this->model.save();
+	// TODO: for a ban action, check if the current user has the according privilegies.
 }
 
 string &UserRepository::getAlias()

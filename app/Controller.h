@@ -11,6 +11,7 @@ class Controller {
 private:
 	static string userInputString;
 	static string outputString;
+	static string actionString;
 
 	static vector<string> errorBag;
 
@@ -23,6 +24,8 @@ private:
 	void justShow();
 	void prepareView();
 	void prepareViewInput(const string &, const string &);
+	void prepareAction(string &);
+	void chopChunkAndGetAlias(string &);
 public:
 	static void pushError(string &);
 	static vector<string> getErrorBag();
@@ -35,8 +38,6 @@ public:
 
 	vector<string> &getControllerAttributions();
 	char *getControllerName();
-
-	void chopChunkAndGetAlias(string &);
 
 	void operator=(const Controller &);
 

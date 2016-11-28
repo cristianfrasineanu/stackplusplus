@@ -20,13 +20,14 @@ void main()
 			{
 				toast(string(e.what()), string("error"));
 
-				sleepAndClearBuffer(console.getDelay());
+				sleepAndFlushInput(console.getDelay());
 				clearPreviousLines(0);
 			}
 		} while (!console.shouldExit());
 	}
 	catch (const invalid_argument &e)
 	{
+		clearScreen();
 		toast(string(e.what()), string("error"));
 	}
 	catch (const system_error &e)

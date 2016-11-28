@@ -287,10 +287,7 @@ Console::~Console()
 	wbkgd(stdscr, COLOR_PAIR(1));
 	printString("Program exited the main console.\n");
 
-	// This or use the windows Sleep.
-	// Maybe better Sleep.
-	//timeout(this->delay);
-	getch();
+	sleepAndFlushInput(this->delay);
 
 	endwin();
 	refresh();

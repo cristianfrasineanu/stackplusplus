@@ -12,6 +12,9 @@ User UserModel::getAfterUser(string &username)
 		}
 	}
 
+	// Otherwise if we reach the end of the file, the eof flag will be set and write will fail.
+	this->io.clear();
+
 	throw invalid_argument("Username not found!");
 }
 
@@ -19,6 +22,8 @@ User UserModel::getAfterId(int id)
 {
 	this->io.seekg((id - 1) * sizeof(User), this->io.beg);
 	this->io.read(reinterpret_cast<char *>(&this->user), sizeof(User));
+
+	this->io.clear();
 
 	return this->user;
 }
@@ -35,7 +40,28 @@ User UserModel::getActive()
 		}
 	}
 
+	this->io.clear();
+
 	throw exception("No active user!");
+}
+
+bool UserModel::userExists(string &username)
+{
+	User user;
+
+	this->io.seekg(0, this->io.beg);
+
+	while (this->io.read(reinterpret_cast<char *>(&user), sizeof(User)))
+	{
+		if (user.username == username)
+		{
+			return true;
+		}
+	}
+
+	this->io.clear();
+
+	return false;
 }
 
 void UserModel::markAs(string &status, int id)
@@ -51,6 +77,7 @@ void UserModel::markAs(string &status, int id)
 void UserModel::save()
 {
 	this->io.seekp((this->user.id - 1) * sizeof(User), this->io.beg);
+
 	this->io.write(reinterpret_cast<char *>(&this->user), sizeof(User));
 }
 
@@ -81,7 +108,7 @@ void UserModel::setAttributes(map<string, string> &cleanInputs)
 	}
 
 	// If there's a new user, assign created_at with the current date.
-	if (strlen(this->user.full_name) != 0)
+	if (cleanInputs.find("action")->second == "signup")
 	{
 		time_t t = time(nullptr);
 		strftime(this->user.created_at, sizeof(this->user.created_at), "%c", localtime(&t));
@@ -148,6 +175,8 @@ void UserModel::setLastId()
 	{
 		this->io.seekg((this->fileSize / sizeof(User) - 1) * sizeof(User), this->io.beg);
 		this->io.read(reinterpret_cast<char *>(&this->user), sizeof(User));
+
+		this->io.clear();
 
 		this->lastId = this->user.id;
 	}

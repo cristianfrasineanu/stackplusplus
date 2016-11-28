@@ -28,7 +28,7 @@ inline bool isInMap(map<FirstT, SecondT> &haystack, FirstT needle)
 void printVector(vector<string> &);
 void toast(string &, string &);
 void toLowerCase(string &);
-void sleepAndClearBuffer(unsigned);
+void sleepAndFlushInput(unsigned);
 void clearScreen();
 void getString(string &);
 void printString(const char *);

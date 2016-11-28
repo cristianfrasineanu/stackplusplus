@@ -5,6 +5,7 @@
 // Well, just a general controller... not much to see here.
 string Controller::userInputString = "@input-";
 string Controller::outputString = "@output-";
+string Controller::actionString = "@action-";
 
 vector<string> Controller::errorBag = {};
 
@@ -22,6 +23,9 @@ void Controller::prepareView()
 	if (this->hasInput(copyChunk))
 	{
 		this->controllerAttributions.push_back("input");
+
+		// Pass the corresposing action to userInputs.
+		this->prepareAction(copyChunk);
 	}
 	if (this->hasOutput(copyChunk))
 	{
@@ -80,37 +84,39 @@ void Controller::prepareViewInput(const string &subChunk, const string &inputAli
 		const char backspace = 8;
 
 		unsigned char ch = 0;
-		
+
 		noecho();
 		while ((ch = getch()) != carriage_return)
 		{
 			if (ch == backspace && userInput.size())
 			{
-				printw("\b \b");
-				refresh();
+				// Otherwise the previous character will still remain on the screen if not replaced with a whitespace.
+				printString("\b \b");
 				userInput.resize(userInput.size() - 1);
 			}
 			else if (ch != backspace)
 			{
 				userInput += ch;
-				printw("*");
-				refresh();
+				printString("*");
 			}
 		}
-		
-		// Re-enable input and render the previous carriage return.
 		echo();
-		printString("\n");
 	}
 	else
 	{
-		//getline(cin, userInput);
 		getString(userInput);
 	}
 
-	printString("\n");
-
 	this->userInputs[inputAlias] = userInput;
+}
+
+void Controller::prepareAction(string &chunk)
+{
+	this->userInputs["action"] = chunk.substr(chunk.find(Controller::actionString) + Controller::actionString.size(),
+											  chunk.find("\n", chunk.find(Controller::actionString)) - chunk.find(Controller::actionString) - Controller::actionString.size());
+
+	chunk.erase(chunk.find(Controller::actionString),
+		(Controller::actionString + this->userInputs["action"]).size() + 1);
 }
 
 void Controller::pushError(string &error)
@@ -145,6 +151,7 @@ Controller::Controller(char *viewName, string &viewChunk, string &ViewExtension)
 	string controllerName = viewName;
 	controllerName.erase(controllerName.find(ViewExtension), ViewExtension.size()).append("Controller");
 
+	// Enable input echoing when typing.
 	echo();
 
 	this->controllerName = new char[controllerName.size() + 1];
@@ -175,7 +182,7 @@ void Controller::chopChunkAndGetAlias(string &chunk)
 
 	this->prepareViewInput(chunk.substr(0, chunk.find(Controller::userInputString) - 1), inputAlias);
 
-	chunk.erase(0, chunk.find(inputAlias) + inputAlias.size() + 2);
+	chunk.erase(0, chunk.find(inputAlias) + inputAlias.size() + 1);
 }
 
 // Don't assign it multiple times, stupid.

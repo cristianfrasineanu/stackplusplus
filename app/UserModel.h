@@ -42,6 +42,7 @@ public:
 	User getAfterId(int);
 	User getActive();
 
+	bool userExists(string &);
 	void markAs(string &, int);
 	void save();
 	void setAttributes(map<string, string> &);

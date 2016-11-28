@@ -34,7 +34,7 @@ void Model::confirmInput(const map<string, string> &payLoad)
 {
 	this->rawInput = payLoad;
 
-	string entityName = this->parseEntityName(this->rawInput.begin()->first),
+	string entityName = this->parseEntityName((++this->rawInput.begin())->first),
 		inputAlias;
 
 	if (this->repository == NULL)
@@ -44,6 +44,14 @@ void Model::confirmInput(const map<string, string> &payLoad)
 
 	for (map<string, string>::iterator it = this->rawInput.begin(); it != this->rawInput.end(); it++)
 	{
+		// Skip truncation for action.
+		if (it->first == "action")
+		{
+			this->truncatedInput["action"] = it->second;
+
+			continue;
+		}
+
 		inputAlias = it->first;
 		inputAlias.erase(0, entityName.size() + 1);
 
