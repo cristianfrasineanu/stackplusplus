@@ -12,7 +12,6 @@ User UserModel::getAfterUser(string &username)
 		}
 	}
 
-	// Otherwise if we reach the end of the file, the eof flag will be set and write will fail.
 	this->io.clear();
 
 	throw invalid_argument("Username not found!");
@@ -22,8 +21,6 @@ User UserModel::getAfterId(int id)
 {
 	this->io.seekg((id - 1) * sizeof(User), this->io.beg);
 	this->io.read(reinterpret_cast<char *>(&this->user), sizeof(User));
-
-	this->io.clear();
 
 	return this->user;
 }
@@ -39,8 +36,6 @@ User UserModel::getActive()
 			return this->user;
 		}
 	}
-
-	this->io.clear();
 
 	throw exception("No active user!");
 }
@@ -59,8 +54,6 @@ bool UserModel::userExists(string &username)
 		}
 	}
 
-	this->io.clear();
-
 	return false;
 }
 
@@ -78,7 +71,13 @@ void UserModel::save()
 {
 	this->io.seekp((this->user.id - 1) * sizeof(User), this->io.beg);
 
-	this->io.write(reinterpret_cast<char *>(&this->user), sizeof(User));
+	// Otherwise if we reach the end of the file, the eof flag will be set and write will fail.
+	this->io.clear();
+
+	if (!this->io.write(reinterpret_cast<char *>(&this->user), sizeof(User)))
+	{
+		throw system_error(error_code(3, generic_category()), "Failed persisting data to file!");
+	}
 }
 
 void UserModel::setAttributes(map<string, string> &cleanInputs)
@@ -175,8 +174,6 @@ void UserModel::setLastId()
 	{
 		this->io.seekg((this->fileSize / sizeof(User) - 1) * sizeof(User), this->io.beg);
 		this->io.read(reinterpret_cast<char *>(&this->user), sizeof(User));
-
-		this->io.clear();
 
 		this->lastId = this->user.id;
 	}

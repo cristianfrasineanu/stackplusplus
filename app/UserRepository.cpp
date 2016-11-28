@@ -42,13 +42,21 @@ void UserRepository::receiveCleanInput(map<string, string> &cleanInput)
 		try
 		{
 			User user = this->model.getAfterUser(cleanInput.find("username")->second);
-			if (!strcmp(user.password, cleanInput.find("password")->second.c_str()) 
+			if (!strcmp(user.password, cleanInput.find("password")->second.c_str())
 				&& !strcmp(user.deleted_at, "")
 				&& user.banned != true)
 			{
-				this->model.markAs(string("active"), user.id);
-				toast(string("Login successful! Please press -c- confirm your access to the dashboard."), string("success"));
-				printString("\n");
+				try
+				{
+					this->model.markAs(string("active"), user.id);
+
+					toast(string("Login successful! Please press -c- confirm your access to the dashboard."), string("success"));
+					printString("\n");
+				}
+				catch (const system_error &e)
+				{
+					Controller::pushError(string(e.what()));
+				}
 			}
 			else
 			{
@@ -63,14 +71,23 @@ void UserRepository::receiveCleanInput(map<string, string> &cleanInput)
 	else if (action == "signup")
 	{
 		// Try finding the user and validate the request.
-		if (this->model.userExists(cleanInput.find("username")->second)) {
+		if (this->model.userExists(cleanInput.find("username")->second))
+		{
 			Controller::pushError(string("The username already exists!"));
 		}
-		else {
-			toast(string("Account created successfully! Please press -c- confirm your access to the dashboard."), string("success"));
-			printString("\n");
+		else
+		{
+			try
+			{
+				this->model.save();
 
-			this->model.save();
+				toast(string("Account created successfully! Please press -c- confirm your access to the dashboard."), string("success"));
+				printString("\n");
+			}
+			catch (const system_error &e)
+			{
+				Controller::pushError(string(e.what()));
+			}
 		}
 	}
 	else
