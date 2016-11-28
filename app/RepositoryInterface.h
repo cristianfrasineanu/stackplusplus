@@ -19,6 +19,7 @@ protected:
 	map<string, string> ValidationErrors;
 public:
 	virtual void validateItems(map<string, string> &) = 0;
+	virtual void echo(const string &) = 0;
 
 	virtual ~RepositoryInterface();
 };

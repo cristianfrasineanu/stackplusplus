@@ -62,6 +62,20 @@ void Model::confirmInput(const map<string, string> &payLoad)
 	this->repository->validateItems(this->truncatedInput);
 }
 
+void Model::render(const string &outputAlias)
+{
+	string entityName = this->parseEntityName(outputAlias),
+		truncatedAlias = outputAlias;
+
+	if (this->repository == NULL)
+	{
+		this->attachEntity(entityName);
+	}
+
+	truncatedAlias.erase(0, entityName.size() + 1);
+	this->repository->echo(truncatedAlias);
+}
+
 Model::~Model()
 {
 	delete this->repository;

@@ -1,6 +1,11 @@
 #include "UserModel.h"
 
-User UserModel::getAfterUser(string &username)
+char *UserModel::getFullName()
+{
+	return this->user.full_name;
+}
+
+User UserModel::setAfterUser(string &username)
 {
 	this->io.seekg(0, this->io.beg);
 
@@ -17,7 +22,7 @@ User UserModel::getAfterUser(string &username)
 	throw invalid_argument("Username not found!");
 }
 
-User UserModel::getAfterId(int id)
+User UserModel::setAfterId(int id)
 {
 	this->io.seekg((id - 1) * sizeof(User), this->io.beg);
 	this->io.read(reinterpret_cast<char *>(&this->user), sizeof(User));
@@ -25,7 +30,7 @@ User UserModel::getAfterId(int id)
 	return this->user;
 }
 
-User UserModel::getActive()
+User UserModel::setActive()
 {
 	this->io.seekg(0, this->io.beg);
 
@@ -59,7 +64,7 @@ bool UserModel::userExists(string &username)
 
 void UserModel::markAs(string &status, int id)
 {
-	this->getAfterId(id);
+	this->setAfterId(id);
 
 	this->user.active = (status == "active") ? true : false;
 
@@ -111,6 +116,7 @@ void UserModel::setAttributes(map<string, string> &cleanInputs)
 	{
 		time_t t = time(nullptr);
 		strftime(this->user.created_at, sizeof(this->user.created_at), "%c", localtime(&t));
+		this->user.active = true;
 	}
 
 	this->user.id = ++this->lastId;

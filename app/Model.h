@@ -19,6 +19,7 @@ public:
 	Model();
 
 	void confirmInput(const map<string, string> &);
+	void render(const string &);
 
 	~Model();
 };

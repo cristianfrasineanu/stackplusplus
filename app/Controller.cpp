@@ -4,7 +4,7 @@
 //----------------
 // Well, just a general controller... not much to see here.
 string Controller::userInputString = "@input-";
-string Controller::outputString = "@output-";
+string Controller::userOutputString = "@output-";
 string Controller::actionString = "@action-";
 
 vector<string> Controller::errorBag = {};
@@ -24,7 +24,7 @@ void Controller::prepareView()
 	{
 		this->controllerAttributions.push_back("input");
 
-		// Pass the corresposing action to userInputs.
+		// Pass the corresposing action to the repository.
 		this->prepareAction(copyChunk);
 	}
 	if (this->hasOutput(copyChunk))
@@ -36,22 +36,21 @@ void Controller::prepareView()
 	{
 		if (!this->hasOutput(copyChunk))
 		{
-			this->chopChunkAndGetAlias(copyChunk);
+			this->chopChunkAndGetAlias(copyChunk, "input");
 		}
 		else if (!this->hasInput(copyChunk))
 		{
-			// To avoid the type issue, let the model to the outputting via a method, 
-			// same way as getting the input, chopping the chunk.
+			this->chopChunkAndGetAlias(copyChunk, "output");
 		}
 		else if (this->hasInput(copyChunk) || this->hasOutput(copyChunk))
 		{
-			if (copyChunk.find(Controller::userInputString) < copyChunk.find(Controller::outputString))
+			if (copyChunk.find(Controller::userInputString) < copyChunk.find(Controller::userOutputString))
 			{
-				this->chopChunkAndGetAlias(copyChunk);
+				this->chopChunkAndGetAlias(copyChunk, "input");
 			}
 			else
 			{
-				// this->bringDataOnceInChunk()
+				this->chopChunkAndGetAlias(copyChunk, "output");
 			}
 		}
 	}
@@ -74,8 +73,7 @@ void Controller::prepareViewInput(const string &subChunk, const string &inputAli
 	string userInput;
 	map<string, string> currentInput;
 
-	addstr((subChunk + " ").c_str());
-	refresh();
+	addstr(subChunk.c_str());
 
 	// Hide the input when typing any sensitive data.
 	if (inputAlias.find("password") != string::npos)
@@ -110,6 +108,12 @@ void Controller::prepareViewInput(const string &subChunk, const string &inputAli
 	this->userInputs[inputAlias] = userInput;
 }
 
+void Controller::prepareViewOutput(const string &subChunk, const string &outputAlias)
+{
+	addstr(subChunk.c_str());
+	this->model.render(outputAlias);
+}
+
 void Controller::prepareAction(string &chunk)
 {
 	this->userInputs["action"] = chunk.substr(chunk.find(Controller::actionString) + Controller::actionString.size(),
@@ -117,6 +121,31 @@ void Controller::prepareAction(string &chunk)
 
 	chunk.erase(chunk.find(Controller::actionString),
 		(Controller::actionString + this->userInputs["action"]).size() + 1);
+}
+
+void Controller::chopChunkAndGetAlias(string &chunk, const string &type)
+{
+	// Splice the alias (take the part after the "-" in the template string).
+	string alias;
+
+	if (type == "input")
+	{
+		alias = chunk.substr(chunk.find(Controller::userInputString) + Controller::userInputString.size(),
+							 chunk.find("\n", chunk.find(Controller::userInputString)) - (chunk.find(Controller::userInputString) + Controller::userInputString.size()));
+		this->prepareViewInput(chunk.substr(0, chunk.find(Controller::userInputString)), alias);
+	}
+	else if (type == "output")
+	{
+		alias = chunk.substr(chunk.find(Controller::userOutputString) + Controller::userOutputString.size(),
+							 chunk.find_first_of("!?.,)\n ", chunk.find(Controller::userOutputString)) - (chunk.find(Controller::userOutputString) + Controller::userOutputString.size()));
+		this->prepareViewOutput(chunk.substr(0, chunk.find(Controller::userOutputString)), alias);
+	}
+	else
+	{
+		throw invalid_argument("No input or output!");
+	}
+
+	chunk.erase(0, chunk.find(alias) + alias.size());
 }
 
 void Controller::pushError(string &error)
@@ -174,17 +203,6 @@ char *Controller::getControllerName()
 	return this->controllerName;
 }
 
-void Controller::chopChunkAndGetAlias(string &chunk)
-{
-	// Splice the alias (take the part after the "-" in the template string).
-	string inputAlias = chunk.substr(chunk.find(Controller::userInputString) + Controller::userInputString.size(),
-									 chunk.find("\n", chunk.find(Controller::userInputString)) - (chunk.find(Controller::userInputString) + Controller::userInputString.size()));
-
-	this->prepareViewInput(chunk.substr(0, chunk.find(Controller::userInputString) - 1), inputAlias);
-
-	chunk.erase(0, chunk.find(inputAlias) + inputAlias.size() + 1);
-}
-
 // Don't assign it multiple times, stupid.
 void Controller::operator=(const Controller &controller)
 {
@@ -203,7 +221,7 @@ bool Controller::hasInput(const string &raw)
 
 bool Controller::hasOutput(const string &raw)
 {
-	return raw.find(Controller::outputString) != string::npos;
+	return raw.find(Controller::userOutputString) != string::npos;
 }
 
 Controller::~Controller()

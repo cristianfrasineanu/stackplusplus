@@ -3,6 +3,16 @@
 
 string UserRepository::alias = "user";
 
+string &UserRepository::getAlias()
+{
+	return UserRepository::alias;
+}
+
+UserRepository::UserRepository()
+{
+	this->defineValidation();
+}
+
 void UserRepository::defineValidation()
 {
 	// Stand back, I am going to try Regex!
@@ -24,13 +34,6 @@ void UserRepository::defineValidation()
 	Controller::pushError(string(""));
 }
 
-UserRepository::UserRepository()
-{
-	this->defineValidation();
-}
-
-// If the user tries to login, compare the password with the one from the db and mark it as active.
-// Determine which action it's taken based on the payload contents.
 void UserRepository::receiveCleanInput(map<string, string> &cleanInput)
 {
 	this->model.setAttributes(cleanInput);
@@ -41,7 +44,7 @@ void UserRepository::receiveCleanInput(map<string, string> &cleanInput)
 	{
 		try
 		{
-			User user = this->model.getAfterUser(cleanInput.find("username")->second);
+			User user = this->model.setAfterUser(cleanInput.find("username")->second);
 			if (!strcmp(user.password, cleanInput.find("password")->second.c_str())
 				&& !strcmp(user.deleted_at, "")
 				&& user.banned != true)
@@ -97,9 +100,14 @@ void UserRepository::receiveCleanInput(map<string, string> &cleanInput)
 	// TODO: for a ban action, check if the current user has the according privilegies.
 }
 
-string &UserRepository::getAlias()
+// Determine what to output via the model.
+void UserRepository::echo(const string &alias)
 {
-	return UserRepository::alias;
+	if (alias == "fullname")
+	{
+		this->model.setActive();
+		printString(this->model.getFullName());
+	}
 }
 
 void UserRepository::logOutUser()
@@ -108,7 +116,7 @@ void UserRepository::logOutUser()
 
 	try
 	{
-		User activeUser = users.model.getActive();
+		User activeUser = users.model.setActive();
 		users.model.markAs(string("logged_out"), activeUser.id);
 		users.model.save();
 	}

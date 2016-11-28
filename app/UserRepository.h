@@ -20,6 +20,7 @@ public:
 	UserRepository();
 
 	void validateItems(map<string, string> &);
+	void echo(const string &);
 
 	~UserRepository();
 };

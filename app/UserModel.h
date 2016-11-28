@@ -38,9 +38,11 @@ public:
 	static void dumpFile();
 	UserModel();
 
-	User getAfterUser(string &);
-	User getAfterId(int);
-	User getActive();
+	User setAfterUser(string &);
+	User setAfterId(int);
+	User setActive();
+
+	char *getFullName();
 
 	bool userExists(string &);
 	void markAs(string &, int);
