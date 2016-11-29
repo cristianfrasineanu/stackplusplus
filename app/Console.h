@@ -2,14 +2,12 @@
 
 #include <sstream>
 #include <stdexcept>
-#include <filesystem>
 
 #include "Helpers.h"
 #include "View.h"
 #include "Controller.h"
 
 using namespace std;
-namespace fs = std::experimental::filesystem::v1;
 
 class Console {
 private:

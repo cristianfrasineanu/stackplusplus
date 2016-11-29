@@ -79,3 +79,20 @@ void printVector(vector<string> &v)
 		refresh();
 	}
 }
+
+fs::path findFile(const string &directory, const string &fileName)
+{
+	fs::recursive_directory_iterator it(directory);
+
+	while (it != fs::recursive_directory_iterator())
+	{
+		if (fs::is_regular_file((*it))
+			&& it->path().filename() == fileName)
+		{
+			return it->path();
+		}
+		++it;
+	}
+
+	return fs::path(directory);
+}

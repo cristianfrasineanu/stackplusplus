@@ -5,6 +5,8 @@
 #include "RepositoryInterface.h"
 #include "UserModel.h"
 
+using namespace std;
+
 class UserRepository : public RepositoryInterface {
 private:
 	static string alias;

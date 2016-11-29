@@ -1,15 +1,16 @@
 #pragma once
 
-#include <iostream>
 #include <algorithm>
 #include <string>
 #include <vector>
 #include <map>
 #include <Windows.h>
+#include <filesystem>
 
 // Please forgive me. 
 #include <curses.h>
 
+namespace fs = std::experimental::filesystem::v1;
 using namespace std;
 
 template<typename V, typename N>
@@ -33,3 +34,4 @@ void clearScreen();
 void getString(string &);
 void printString(const char *);
 void clearPreviousLines(unsigned);
+fs::path findFile(const string &, const string &);

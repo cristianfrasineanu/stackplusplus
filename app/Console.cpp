@@ -131,6 +131,7 @@ void Console::loadViews(const fs::path &viewsFolder)
 		{
 			this->loadedViews.push_back(it->path().filename());
 		}
+
 		++it;
 	}
 }
@@ -138,8 +139,7 @@ void Console::loadViews(const fs::path &viewsFolder)
 void Console::handleView()
 {
 	string content,
-		path = Console::viewsFolder;
-	path.append("\\").append(this->currentView.getViewName());
+		path = findFile(Console::viewsFolder, this->currentView.getViewName()).string();
 
 	stringstream buffer;
 	ifstream viewFile(path, ios::in);

@@ -4,8 +4,6 @@
 
 #include "Helpers.h"
 
-using namespace std;
-
 //---Model---
 //----------------
 // The contents of an entity are serialized as a structure with static components.

@@ -4,17 +4,13 @@
 _\ \ || (_| | (__|   </ ___/| | |_| \__ \/ ___/| | |_| \__ \
 \__/\__\__,_|\___|_|\_\/    |_|\__,_|___/\/    |_|\__,_|___/
                                                             
-~~~ Enter your details below:
+~~~ Welcome, @output-user-fullname! Make you choice:
 
-Full name: @input-user-fullname
-
-Email: @input-user-email
-
-Username: @input-user-username
-
-Password: @input-user-password
-
-@action-signup
+ -1- Search or ask a question
+ -2- See your questions
+ -3- Browse a category
+ -3- Edit your profile
+ -4- Logout
 
 ===========================================================
 # (c) 2016 Cristian-Adrian Frasineanu | GNU GPLv3 licence #

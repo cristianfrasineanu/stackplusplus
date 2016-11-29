@@ -2,8 +2,6 @@
 
 #include "Helpers.h"
 
-using namespace std;
-
 //---Repository---
 //----------------
 // This entity acts like a glue between the accessor model and the actual model.

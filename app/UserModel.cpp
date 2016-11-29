@@ -166,7 +166,7 @@ void UserModel::openIOStream()
 
 	if (!this->io.is_open())
 	{
-		cout << "Couldn't open the file stream path: " << UserModel::pathToFile;
+		toast(string("Couldn't open the file stream!"), string("error"));
 	}
 }
 

@@ -7,6 +7,8 @@
 
 #include "ModelInterface.h"
 
+using namespace std;
+
 typedef struct {
 	int id;
 
