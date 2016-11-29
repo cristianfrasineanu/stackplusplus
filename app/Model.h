@@ -3,6 +3,7 @@
 #include "Helpers.h"
 #include "RepositoryInterface.h"
 #include "UserRepository.h"
+#include "QuestionRepository.h"
 
 using namespace std;
 

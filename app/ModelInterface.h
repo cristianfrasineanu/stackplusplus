@@ -19,6 +19,7 @@ protected:
 public:
 	virtual void save() = 0;
 	virtual void setAttributes(map<string, string> &) = 0;
+	virtual void markAs(const string &, int) = 0;
 	
 	virtual ~ModelInterface();
 };

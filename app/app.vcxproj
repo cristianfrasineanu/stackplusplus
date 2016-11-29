@@ -151,6 +151,8 @@
     <ClCompile Include="Helpers.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelInterface.cpp" />
+    <ClCompile Include="QuestionModel.cpp" />
+    <ClCompile Include="QuestionRepository.cpp" />
     <ClCompile Include="RepositoryInterface.cpp" />
     <ClCompile Include="UserModel.cpp" />
     <ClCompile Include="UserRepository.cpp" />
@@ -160,6 +162,8 @@
     <ClInclude Include="Console.h" />
     <ClInclude Include="Controller.h" />
     <ClInclude Include="ModelInterface.h" />
+    <ClInclude Include="QuestionModel.h" />
+    <ClInclude Include="QuestionRepository.h" />
     <ClInclude Include="RepositoryInterface.h" />
     <ClInclude Include="Helpers.h" />
     <ClInclude Include="Model.h" />

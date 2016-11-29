@@ -53,7 +53,8 @@ void View::loadViewsOptions()
 		faqView = "faq.view",
 		helpView = "help.view",
 		dashboardView = "dashboard.view",
-		logoutView = "logout.view";
+		logoutView = "logout.view",
+		findOrAsk = "search-or-ask.view";
 
 	View::ViewsOptions = {
 		{ homeView, { { '1', "login.view" }, { '2', "signup.view" }, { '3', "browse-index.view" },
@@ -65,13 +66,15 @@ void View::loadViewsOptions()
 
 		{ signupView, { { 'c', "dashboard.view" } } },
 
-		{ dashboardView, { { '4', "logout.view" } } },
+		{ dashboardView, { { '1', "find-or-ask.view" }, { '4', "logout.view" } } },
 
 		{ logoutView, { { 'y', "confirm" }, { 'b', "back" } } },
 		 
 		{ faqView, { { 'q', "quit" }, { 'b', "back" } } },
 
-		{ helpView, { { 'q', "quit" }, { 'b', "back" } } }
+		{ helpView, { { 'q', "quit" }, { 'b', "back" } } },
+		
+		{ findOrAsk, { { 'c', "search-results.view" } } }
 	};
 }
 

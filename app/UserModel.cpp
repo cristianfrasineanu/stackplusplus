@@ -17,8 +17,6 @@ User UserModel::setAfterUser(string &username)
 		}
 	}
 
-	this->io.clear();
-
 	throw invalid_argument("Username not found!");
 }
 
@@ -62,7 +60,7 @@ bool UserModel::userExists(string &username)
 	return false;
 }
 
-void UserModel::markAs(string &status, int id)
+void UserModel::markAs(const string &status, int id)
 {
 	this->setAfterId(id);
 
@@ -188,6 +186,8 @@ void UserModel::setLastId()
 UserModel::UserModel()
 {
 	this->openIOStream();
-	this->protectedAttributes = { "created_at", "deleted_at", "role", "active", "banned" };
+
+	// Non mass-assignable fields.
+	this->protectedAttributes = { "id", "created_at", "deleted_at", "role", "active", "banned" };
 	this->setLastId();
 }

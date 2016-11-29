@@ -281,6 +281,7 @@ Console::~Console()
 
 	// Dump all the records...
 	UserModel::dumpFile();
+	QuestionModel::dumpFile();
 
 	// Revert to default terminal and display notice.
 	clearScreen();

@@ -12,14 +12,10 @@ void Model::attachEntity(string &model)
 	{
 		this->repository = new UserRepository();
 	}
-	/*else if (model == "question")
+	else if (model == QuestionRepository::getAlias())
 	{
-
+		this->repository = new QuestionRepository();
 	}
-	else if (model == "category")
-	{
-
-	}*/
 }
 
 Model::Model()

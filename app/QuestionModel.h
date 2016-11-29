@@ -10,25 +10,26 @@ using namespace std;
 
 typedef struct {
 	int id;
+	int user_id;
+	int category_id = 1;
 
-	char full_name[255] = "";
-	char email[255] = "";
-	char username[20] = "";
-	char password[17] = "";
+	unsigned votes = 0;
+
+	char title[255] = "";
+	char body[1023] = "";
 	char created_at[50] = "";
 
 	// Soft deletes
 	char deleted_at[50] = "";
-	char role[10] = "user";
-	bool active = 1;
-	bool banned = 0;
-} User;
+	bool hasAnswer = 0;
+	bool active = 0;
+} Question;
 
-class UserModel : public ModelInterface {
+class QuestionModel : public ModelInterface {
 private:
 	static string pathToFile;
 
-	User user;
+	Question question;
 
 	void openIOStream();
 	void setLastId();
@@ -37,19 +38,17 @@ private:
 	int lastId;
 public:
 	static void dumpFile();
-	UserModel();
+	QuestionModel();
 
-	User setAfterUser(string &);
-	User setAfterId(int);
-	User setActive();
+	Question setAfterUserId(int);
+	Question setAfterId(int);
 
-	char *getFullName();
-
-	bool userExists(string &);
+	bool questionTitleExists(string &);
+	void markAnswered(int);
 	void markAs(const string &, int);
 	void save();
 	void setAttributes(map<string, string> &);
 
 	// Set the active to false on logout
-	~UserModel();
+	~QuestionModel();
 };
