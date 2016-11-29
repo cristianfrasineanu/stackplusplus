@@ -4,4 +4,4 @@ Well, at least it's not COBOL...
 
 # First-time use
 
-* Rename .example.*.store to just *.store in /database
+* Rename .example.\*.store to just *.store in /database
