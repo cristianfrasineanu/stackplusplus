@@ -6,11 +6,11 @@ _\ \ || (_| | (__|   </ ___/| | |_| \__ \/ ___/| | |_| \__ \
                                                             
 ~~~ Results:
 
-@output-question-results
+{output-question-results}
 
 Did you find what you were looking for?
 
--1- to ask a question, or -2- to browse through the results.
+-1- to create a new topic, -2- to browse through the results, or -3- to go back to the dashboard.
 
 ===========================================================
 # (c) 2016 Cristian-Adrian Frasineanu | GNU GPLv3 licence #

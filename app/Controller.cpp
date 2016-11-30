@@ -8,6 +8,7 @@ string Controller::userOutputString = "@output-";
 string Controller::actionString = "@action-";
 
 vector<string> Controller::errorBag = {};
+string Controller::hasRedirectTo = "";
 
 void Controller::justShow()
 {

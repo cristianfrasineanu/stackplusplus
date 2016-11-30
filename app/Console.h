@@ -34,6 +34,9 @@ private:
 
 	void renderPreviousView();
 	void handleView();
+
+	void handleErrors();
+	void handleRedirect();
 public:
 	static void initTerminal();
 

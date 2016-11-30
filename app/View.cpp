@@ -54,27 +54,35 @@ void View::loadViewsOptions()
 		helpView = "help.view",
 		dashboardView = "dashboard.view",
 		logoutView = "logout.view",
-		findOrAsk = "search-or-ask.view";
+		findOrAskView = "find-or-ask.view",
+		createView = "create.view",
+		searchResultsView = "search-results.view";
+
+	// Create non-linkable views, e.g. search results
 
 	View::ViewsOptions = {
-		{ homeView, { { '1', "login.view" }, { '2', "signup.view" }, { '3', "browse-index.view" },
-		{ '4', "faq.view" }, { '5', "help.view" }, { 'q', "quit" } } },
+		{ homeView, { { '1', loginView }, { '2', signupView }, { '3', browseIndexView },
+		{ '4', faqView }, { '5', helpView }, { 'q', "" } } },
 
-		{ browseIndexView, { { 'q', "quit" }, { 'b', "back" } } },
+		{ browseIndexView, { { 'q', "" }, { 'b', "" } } },
 
-		{ loginView, { { 'c', "dashboard.view" } } },
+		{ loginView, { { 'c', dashboardView } } },
 
-		{ signupView, { { 'c', "dashboard.view" } } },
+		{ signupView, { { 'c', dashboardView } } },
 
-		{ dashboardView, { { '1', "find-or-ask.view" }, { '4', "logout.view" } } },
+		{ dashboardView, { { '1', findOrAskView }, { '4', logoutView } } },
 
-		{ logoutView, { { 'y', "confirm" }, { 'b', "back" } } },
-		 
-		{ faqView, { { 'q', "quit" }, { 'b', "back" } } },
+		{ logoutView, { { 'y', "" }, { 'b', "" } } },
 
-		{ helpView, { { 'q', "quit" }, { 'b', "back" } } },
-		
-		{ findOrAsk, { { 'c', "search-results.view" } } }
+		{ faqView, { { 'q', "" }, { 'b', "" } } },
+
+		{ helpView, { { 'q', "" }, { 'b', "" } } },
+
+		{ findOrAskView, { { 'b', "" } } },
+
+		{ searchResultsView, { { '1', createView }, { '3', dashboardView } } },
+
+		{ createView, { { '1', dashboardView } } }
 	};
 }
 

@@ -42,6 +42,7 @@ public:
 
 	Question setAfterUserId(int);
 	Question setAfterId(int);
+	vector<Question> retrieveAll();
 
 	bool questionTitleExists(string &);
 	void markAnswered(int);

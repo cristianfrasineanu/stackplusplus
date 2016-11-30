@@ -30,6 +30,7 @@ private:
 public:
 	static void pushError(string &);
 	static vector<string> getErrorBag();
+	static string hasRedirectTo;
 
 	Controller();
 	Controller(char *, string &, string &);

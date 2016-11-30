@@ -152,13 +152,11 @@ void Console::handleView()
 		this->theController = Controller(this->currentView.getViewName(), buffer.str(), View::getViewExtension());
 		if (!Controller::getErrorBag().empty())
 		{
-			toast(string("There were some issues:"), string("error"));
-			printString("\n");
-			printVector(Controller::getErrorBag());
-
-			// Empty the bag and provide a retry step.
-			Controller::pushError(string(""));
-			this->provideRetry();
+			this->handleErrors();
+		}
+		else if (Controller::hasRedirectTo != "")
+		{
+			this->handleRedirect();
 		}
 
 		buffer.clear();
@@ -170,7 +168,30 @@ void Console::handleView()
 	}
 }
 
-// Prepare the next view and also cache the current one.
+void Console::handleErrors()
+{
+	toast(string("There were some issues:"), string("error"));
+	printString("\n");
+	printVector(Controller::getErrorBag());
+
+	Controller::pushError(string(""));
+
+	this->provideRetry();
+}
+
+void Console::handleRedirect()
+{
+	toast(string("Redirecting..."), string("notification"));
+	printString("\n");
+	sleepAndFlushInput(this->delay);
+
+	string redirectTo = Controller::hasRedirectTo;
+	Controller::hasRedirectTo = "";
+
+	this->renderNextView(redirectTo);
+}
+
+// Prepare the next view and cache the current one.
 void Console::renderNextView()
 {
 	string nextView = this->currentView.getAvailableOptions().find(this->getLastInput())->second;
@@ -183,13 +204,14 @@ void Console::renderNextView()
 	this->handleView();
 }
 
-// Render a custom view without caching the previous one as it breaks the normal flow.
+// Render a custom view without caching the previous one.
 void Console::renderNextView(string &viewName)
 {
 	map<char, string> nextOptions = View::getViewsOptions().find(viewName)->second;
 
-	this->previousViews.erase(this->previousViews.begin(), this->previousViews.end());
+	//this->previousViews.erase(this->previousViews.end() - 1, this->previousViews.end());
 	this->currentView = View(viewName, nextOptions);
+	this->lastInput = '\0';
 
 	clearScreen();
 	this->handleView();

@@ -133,16 +133,16 @@ void UserModel::dumpFile()
 
 		while (db.read(reinterpret_cast<char *>(&user), sizeof(User)))
 		{
-			dump << user.id << endl
-				<< user.full_name << endl
-				<< user.email << endl
-				<< user.username << endl
-				<< user.password << endl
-				<< user.created_at << endl
-				<< user.deleted_at << endl
-				<< user.role << endl
-				<< user.active << endl
-				<< user.banned << endl << endl;
+			dump << "Id: " << user.id << endl
+				<< "Full name: " << user.full_name << endl
+				<< "Email: " << user.email << endl
+				<< "Username: " << user.username << endl
+				<< "Password: " << user.password << endl
+				<< "Created at: " << user.created_at << endl
+				<< "Delete at: " << user.deleted_at << endl
+				<< "Role: " << user.role << endl
+				<< "Active: " << user.active << endl
+				<< "Banned: " << user.banned << endl << endl;
 		}
 
 		db.close();

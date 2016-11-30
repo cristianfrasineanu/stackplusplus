@@ -19,12 +19,15 @@ void QuestionRepository::defineValidation()
 	this->ValidationRules = {
 		{ "title", "^.*$" },
 		{ "body", "^.*$" },
-		{ "keyword", "^.*$" }
+		{ "category", "^.*$" },
+		{ "keyword", "^.*$" },
+		{ "action", "(?!.*\\W+)(?!.*[A-Z]+)[a-z]+$" }
 	};
 
 	this->ValidationErrors = {
 		{ "title", "..." },
 		{ "body", "..." },
+		{ "category", "..." },
 		{ "keyword", "..." }
 	};
 
@@ -40,16 +43,49 @@ void QuestionRepository::receiveCleanInput(map<string, string> &cleanInput)
 	if (action == "search")
 	{
 		string keyword = cleanInput.find("keyword")->second;
+		bool foundAnyRelated = false;
 
-		toast(string("Search!"), string("notice"));
+		vector<Question> results = this->model.retrieveAll();
+		vector<Question>::iterator it = results.begin();
+
+		while (it != results.end())
+		{
+			if (string((*it).title).find(keyword) != string::npos || string((*it).body).find(keyword) != string::npos)
+			{
+				foundAnyRelated = true;
+				++it;
+			}
+			else
+			{
+				it = results.erase(it);
+			}
+		}
+
+		if (!foundAnyRelated)
+		{
+			Controller::hasRedirectTo = "create.view";
+
+			toast(string("No related questions found!"), string("notification"));
+			printString("\n");
+		}
+		else
+		{
+			Controller::hasRedirectTo = "search-results.view";
+
+			toast(string("Found ") + to_string(results.size()) + string(" similar questions."), string("notification"));
+			printString("\n");
+		}
 	}
 	else if (action == "create")
 	{
-		toast(string("Create!"), string("notice"));
+		this->model.save();
+
+		toast(string("Your question was created!"), string("notification"));
+		printString("\n");
 	}
 	else
 	{
-		Controller::pushError(string("Please provide a valid action!"));
+		Controller::pushError(string("Please provide a valid action in your view!"));
 	}
 }
 
@@ -76,10 +112,19 @@ void QuestionRepository::validateItems(map<string, string> &truncatedInput)
 		{
 			toast("\n\n" + string(e.what()) + "\n", string("error"));
 		}
+
+		if (it->first == "category" && !isInVector(vector<string>({ "something", "tada", "c++" }), it->second))
+		{
+			Controller::pushError(string("Please provide a valid category."));
+		}
 	}
 
 	if (Controller::getErrorBag().empty())
 	{
+		if (truncatedInput.find("action")->second == "create")
+		{
+			truncatedInput["userId"] = to_string(this->users.setActive().id);
+		}
 		this->receiveCleanInput(truncatedInput);
 	}
 }

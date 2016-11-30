@@ -4,10 +4,13 @@
 _\ \ || (_| | (__|   </ ___/| | |_| \__ \/ ___/| | |_| \__ \
 \__/\__\__,_|\___|_|\_\/    |_|\__,_|___/\/    |_|\__,_|___/
                                                             
-~~~ If you cannot find any questions, then you can open a new one.
+~~~ Seek and you will find...
 
---> @input-question-keyword
-@action-seach
+
+Title: @input-question-title
+Description: @input-question-body
+Category: @input-question-category
+@action-create
 
 ===========================================================
 # (c) 2016 Cristian-Adrian Frasineanu | GNU GPLv3 licence #

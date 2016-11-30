@@ -23,6 +23,23 @@ Question QuestionModel::setAfterId(int id)
 	return this->question;
 }
 
+vector<Question> QuestionModel::retrieveAll()
+{
+	vector<Question> questions;
+
+	this->io.seekg(0, this->io.beg);
+
+	while (this->io.read(reinterpret_cast<char *>(&this->question), sizeof(Question)))
+	{
+		if (string(this->question.deleted_at) == "")
+		{
+			questions.push_back(this->question);
+		}
+	}
+
+	return questions;
+}
+
 bool QuestionModel::questionTitleExists(string &title)
 {
 	Question question;
@@ -87,6 +104,16 @@ void QuestionModel::setAttributes(map<string, string> &cleanInputs)
 		{
 			strcpy(this->question.body, it->second.c_str());
 		}
+		else if (it->first == "userId")
+		{
+			this->question.user_id = atoi(it->second.c_str());
+		}
+		else if (it->first == "category")
+		{
+			this->question.category_id = 1;
+
+			// TODO: get the id from the static map defined in the category model.
+		}
 	}
 
 	// If there's a new user, assign created_at with the current date.
@@ -94,6 +121,7 @@ void QuestionModel::setAttributes(map<string, string> &cleanInputs)
 	{
 		time_t t = time(nullptr);
 		strftime(this->question.created_at, sizeof(this->question.created_at), "%c", localtime(&t));
+		this->question.active = false;
 	}
 
 	this->question.id = ++this->lastId;
@@ -112,14 +140,16 @@ void QuestionModel::dumpFile()
 
 		while (db.read(reinterpret_cast<char *>(&question), sizeof(Question)))
 		{
-			dump << question.id << endl
-				<< question.user_id << endl
-				<< question.category_id << endl
-				<< question.title << endl
-				<< question.body << endl
-				<< question.created_at << endl
-				<< question.deleted_at << endl
-				<< question.hasAnswer << endl;
+			dump << "Id: " << question.id << endl
+				<< "User ID: " << question.user_id << endl
+				<< "Category ID: " << question.category_id << endl
+				<< "Votes: " << question.votes << endl
+				<< "Title: " << question.title << endl
+				<< "Body: " << question.body << endl
+				<< "Created at: " << question.created_at << endl
+				<< "Deleted at: " << question.deleted_at << endl
+				<< "Has answer: " << question.hasAnswer << endl
+				<< "Active: " << question.active << endl << endl;
 		}
 
 		db.close();

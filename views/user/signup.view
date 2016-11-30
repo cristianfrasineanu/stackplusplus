@@ -6,11 +6,13 @@ _\ \ || (_| | (__|   </ ___/| | |_| \__ \/ ___/| | |_| \__ \
                                                             
 ~~~ Enter your details below:
 
+
 Full name: @input-user-fullname
 Email: @input-user-email
 Username: @input-user-username
 Password: @input-user-password
 @action-signup
+
 
 ===========================================================
 # (c) 2016 Cristian-Adrian Frasineanu | GNU GPLv3 licence #
