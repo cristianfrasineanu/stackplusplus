@@ -56,6 +56,8 @@ void Model::confirmInput(const map<string, string> &payLoad)
 
 	// Validate the input, if there are any errors, display them and reload the view.
 	this->repository->validateItems(this->truncatedInput);
+
+	delete this->repository;
 }
 
 void Model::render(const string &outputAlias)
@@ -67,6 +69,8 @@ void Model::render(const string &outputAlias)
 
 	truncatedAlias.erase(0, entityName.size() + 1);
 	this->repository->echo(truncatedAlias);
+
+	delete this->repository;
 }
 
 void Model::signalAction(const string &actionAlias)
@@ -78,9 +82,10 @@ void Model::signalAction(const string &actionAlias)
 
 	truncatedAlias.erase(0, entityName.size() + 1);
 	this->repository->apply(truncatedAlias);
+
+	delete this->repository;
 }
 
 Model::~Model()
 {
-	delete this->repository;
 }

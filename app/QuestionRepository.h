@@ -13,7 +13,7 @@ private:
 	static string alias;
 
 	QuestionModel model;
-	UserModel *users;
+	UserModel users;
 
 	void defineValidation();
 	void receiveCleanInput(map<string, string> &);

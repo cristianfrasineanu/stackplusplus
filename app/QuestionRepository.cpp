@@ -155,11 +155,7 @@ void QuestionRepository::validateItems(map<string, string> &truncatedInput)
 	{
 		if (truncatedInput.find("action")->second == "create")
 		{
-			this->users = new UserModel;
-			truncatedInput["userId"] = to_string(this->users->setActive().id);
-
-			// Prevent multiple IO streams opened at the same time.
-			delete this->users;
+			truncatedInput["userId"] = to_string(this->users.setActive().id);
 		}
 		this->receiveCleanInput(truncatedInput);
 	}
