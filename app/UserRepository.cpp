@@ -29,6 +29,7 @@ void UserRepository::defineValidation()
 		{ "email", "Invalid email address." },
 		{ "username", "Username should be 8-20 characters long, should start only with a letter and should not repeat special characters." },
 		{ "password", "Password should be 5-16 characters long, and contain at least an uppercase letter, a number and a special character." },
+		{ "action", "Please provide a valid action!" }
 	};
 
 	Controller::pushError(string(""));
@@ -103,9 +104,10 @@ void UserRepository::receiveCleanInput(map<string, string> &cleanInput)
 // Determine what to output via the model.
 void UserRepository::echo(const string &alias)
 {
+	this->model.setActive();
+
 	if (alias == "fullname")
 	{
-		this->model.setActive();
 		printString(this->model.getFullName());
 	}
 }
@@ -118,7 +120,6 @@ void UserRepository::logOutUser()
 	{
 		User activeUser = users.model.setActive();
 		users.model.markAs(string("logged_out"), activeUser.id);
-		users.model.save();
 	}
 	catch (const exception &e)
 	{

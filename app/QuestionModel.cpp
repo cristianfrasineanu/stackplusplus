@@ -3,7 +3,6 @@
 Question QuestionModel::setAfterUserId(int userId)
 {
 	this->io.seekg(0, this->io.beg);
-
 	while (this->io.read(reinterpret_cast<char *>(&this->question), sizeof(question)))
 	{
 		if (this->question.user_id == userId)
@@ -23,12 +22,30 @@ Question QuestionModel::setAfterId(int id)
 	return this->question;
 }
 
+bool QuestionModel::setActiveIfAny()
+{
+	if (this->question.active == true)
+	{
+		return true;
+	}
+
+	this->io.seekg(0, this->io.beg);
+	while (this->io.read(reinterpret_cast<char *>(&this->question), sizeof(Question)))
+	{
+		if (this->question.active == true)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 vector<Question> QuestionModel::retrieveAll()
 {
 	vector<Question> questions;
 
 	this->io.seekg(0, this->io.beg);
-
 	while (this->io.read(reinterpret_cast<char *>(&this->question), sizeof(Question)))
 	{
 		if (string(this->question.deleted_at) == "")
@@ -40,12 +57,31 @@ vector<Question> QuestionModel::retrieveAll()
 	return questions;
 }
 
+int QuestionModel::getId()
+{
+	return this->question.id;
+}
+
+char *QuestionModel::getTitle()
+{
+	return this->question.title;
+}
+
+char *QuestionModel::getBody()
+{
+	return this->question.body;
+}
+
+char *QuestionModel::getCategory()
+{
+	return "category";
+}
+
 bool QuestionModel::questionTitleExists(string &title)
 {
 	Question question;
 
 	this->io.seekg(0, this->io.beg);
-
 	while (this->io.read(reinterpret_cast<char *>(&question), sizeof(Question)))
 	{
 		if (question.title == title)
@@ -68,24 +104,28 @@ void QuestionModel::markAnswered(int id)
 
 void QuestionModel::markAs(const string &status, int id)
 {
-	this->setAfterId(id);
+	if (id != NULL)
+	{
+		this->setAfterId(id);
+	}
 
 	this->question.active = (status == "active") ? true : false;
 
 	this->save();
 }
 
-// Serialize the object.
+// Serialize the question.
 void QuestionModel::save()
 {
 	this->io.seekp((this->question.id - 1) * sizeof(Question), this->io.beg);
-
 	this->io.clear();
-
 	if (!this->io.write(reinterpret_cast<char *>(&this->question), sizeof(Question)))
 	{
 		throw system_error(error_code(3, generic_category()), "Failed persisting data to file!");
 	}
+
+	// Flush the buffer and update the destination.
+	this->io.flush();
 }
 
 void QuestionModel::setAttributes(map<string, string> &cleanInputs)
@@ -112,7 +152,7 @@ void QuestionModel::setAttributes(map<string, string> &cleanInputs)
 		{
 			this->question.category_id = 1;
 
-			// TODO: get the id from the static map defined in the category model.
+			// TODO: get the id from the category model.
 		}
 	}
 
@@ -121,7 +161,7 @@ void QuestionModel::setAttributes(map<string, string> &cleanInputs)
 	{
 		time_t t = time(nullptr);
 		strftime(this->question.created_at, sizeof(this->question.created_at), "%c", localtime(&t));
-		this->question.active = false;
+		this->question.active = true;
 	}
 
 	this->question.id = ++this->lastId;
@@ -137,7 +177,6 @@ void QuestionModel::dumpFile()
 	if (db.is_open() && dump.is_open())
 	{
 		db.seekg(0, db.beg);
-
 		while (db.read(reinterpret_cast<char *>(&question), sizeof(Question)))
 		{
 			dump << "Id: " << question.id << endl

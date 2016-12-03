@@ -63,13 +63,21 @@ void Model::render(const string &outputAlias)
 	string entityName = this->parseEntityName(outputAlias),
 		truncatedAlias = outputAlias;
 
-	if (this->repository == NULL)
-	{
-		this->attachEntity(entityName);
-	}
+	this->attachEntity(entityName);
 
 	truncatedAlias.erase(0, entityName.size() + 1);
 	this->repository->echo(truncatedAlias);
+}
+
+void Model::signalAction(const string &actionAlias)
+{
+	string entityName = this->parseEntityName(actionAlias),
+		truncatedAlias = actionAlias;
+
+	this->attachEntity(entityName);
+
+	truncatedAlias.erase(0, entityName.size() + 1);
+	this->repository->apply(truncatedAlias);
 }
 
 Model::~Model()

@@ -37,6 +37,7 @@ public:
 
 	bool hasInput(const string &);
 	bool hasOutput(const string &);
+	bool hasAction(const string &);
 
 	vector<string> &getControllerAttributions();
 	char *getControllerName();

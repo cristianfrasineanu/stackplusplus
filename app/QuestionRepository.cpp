@@ -28,7 +28,8 @@ void QuestionRepository::defineValidation()
 		{ "title", "..." },
 		{ "body", "..." },
 		{ "category", "..." },
-		{ "keyword", "..." }
+		{ "keyword", "..." },
+		{ "action", "Please provide a valid action!" }
 	};
 
 	Controller::pushError(string(""));
@@ -82,6 +83,8 @@ void QuestionRepository::receiveCleanInput(map<string, string> &cleanInput)
 
 		toast(string("Your question was created!"), string("notification"));
 		printString("\n");
+
+		Controller::hasRedirectTo = "show-question.view";
 	}
 	else
 	{
@@ -92,8 +95,36 @@ void QuestionRepository::receiveCleanInput(map<string, string> &cleanInput)
 // Determine what to output via the model.
 void QuestionRepository::echo(const string &alias)
 {
-	if (alias == "")
+	this->model.setActiveIfAny();
+
+	if (alias == "id")
 	{
+		printString(to_string(this->model.getId()).c_str());
+	}
+	else if (alias == "title")
+	{
+		printString(this->model.getTitle());
+	}
+	else if (alias == "body")
+	{
+		printString(this->model.getBody());
+	}
+	else if (alias == "category")
+	{
+		printString(this->model.getCategory());
+	}
+}
+
+void QuestionRepository::apply(const string &action)
+{
+	// Forget the active question when the action is triggered.
+	// TODO: The changes aren't persisted, why? (the question remains active forever)
+	if (action == "reset")
+	{
+		if (this->model.setActiveIfAny())
+		{
+			this->model.markAs("nonactive");
+		}
 	}
 }
 
@@ -113,6 +144,7 @@ void QuestionRepository::validateItems(map<string, string> &truncatedInput)
 			toast("\n\n" + string(e.what()) + "\n", string("error"));
 		}
 
+		// TODO: implement a category model.
 		if (it->first == "category" && !isInVector(vector<string>({ "something", "tada", "c++" }), it->second))
 		{
 			Controller::pushError(string("Please provide a valid category."));
@@ -123,7 +155,11 @@ void QuestionRepository::validateItems(map<string, string> &truncatedInput)
 	{
 		if (truncatedInput.find("action")->second == "create")
 		{
-			truncatedInput["userId"] = to_string(this->users.setActive().id);
+			this->users = new UserModel;
+			truncatedInput["userId"] = to_string(this->users->setActive().id);
+
+			// Prevent multiple IO streams opened at the same time.
+			delete this->users;
 		}
 		this->receiveCleanInput(truncatedInput);
 	}

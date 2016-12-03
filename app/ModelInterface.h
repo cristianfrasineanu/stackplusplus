@@ -15,6 +15,7 @@ private:
 protected:
 	map<string, string> attributes;
 	vector<string> protectedAttributes;
+
 	fstream io;
 public:
 	virtual void save() = 0;

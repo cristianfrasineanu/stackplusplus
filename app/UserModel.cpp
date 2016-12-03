@@ -69,18 +69,18 @@ void UserModel::markAs(const string &status, int id)
 	this->save();
 }
 
-// Serialize the object.
+// Serialize the user.
 void UserModel::save()
 {
 	this->io.seekp((this->user.id - 1) * sizeof(User), this->io.beg);
-
-	// Otherwise if we reach the end of the file, the eof flag will be set and write will fail.
 	this->io.clear();
-
 	if (!this->io.write(reinterpret_cast<char *>(&this->user), sizeof(User)))
 	{
 		throw system_error(error_code(3, generic_category()), "Failed persisting data to file!");
 	}
+
+	// Flush the intermediate buffer and update the destination.
+	this->io.flush();
 }
 
 void UserModel::setAttributes(map<string, string> &cleanInputs)

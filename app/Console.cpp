@@ -211,7 +211,6 @@ void Console::renderNextView(string &viewName)
 
 	//this->previousViews.erase(this->previousViews.end() - 1, this->previousViews.end());
 	this->currentView = View(viewName, nextOptions);
-	this->lastInput = '\0';
 
 	clearScreen();
 	this->handleView();

@@ -40,13 +40,19 @@ public:
 	static void dumpFile();
 	QuestionModel();
 
+	bool setActiveIfAny();
 	Question setAfterUserId(int);
 	Question setAfterId(int);
 	vector<Question> retrieveAll();
 
+	int getId();
+	char *getTitle();
+	char *getBody();
+	char *getCategory();
+
 	bool questionTitleExists(string &);
 	void markAnswered(int);
-	void markAs(const string &, int);
+	void markAs(const string &, int = NULL);
 	void save();
 	void setAttributes(map<string, string> &);
 

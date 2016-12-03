@@ -21,6 +21,7 @@ public:
 
 	void confirmInput(const map<string, string> &);
 	void render(const string &);
+	void signalAction(const string &);
 
 	~Model();
 };

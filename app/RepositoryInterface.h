@@ -18,6 +18,7 @@ protected:
 public:
 	virtual void validateItems(map<string, string> &) = 0;
 	virtual void echo(const string &) = 0;
+	virtual void apply(const string &);
 
 	virtual ~RepositoryInterface();
 };

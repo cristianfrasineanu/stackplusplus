@@ -13,7 +13,7 @@ private:
 	static string alias;
 
 	QuestionModel model;
-	UserModel users;
+	UserModel *users;
 
 	void defineValidation();
 	void receiveCleanInput(map<string, string> &);
@@ -24,6 +24,7 @@ public:
 
 	void validateItems(map<string, string> &);
 	void echo(const string &);
+	void apply(const string &);
 
 	~QuestionRepository();
 };

@@ -24,13 +24,20 @@ void Controller::prepareView()
 	if (this->hasInput(copyChunk))
 	{
 		this->controllerAttributions.push_back("input");
-
-		// Pass the corresposing action to the repository.
-		this->prepareAction(copyChunk);
 	}
 	if (this->hasOutput(copyChunk))
 	{
 		this->controllerAttributions.push_back("output");
+	}
+	if (this->hasAction(copyChunk))
+	{
+		// Pass the corresposing action to the repository.
+		this->prepareAction(copyChunk);
+
+		if (!this->hasInput(copyChunk))
+		{
+			this->model.signalAction(this->userInputs["action"]);
+		}
 	}
 
 	while (this->hasInput(copyChunk) || this->hasOutput(copyChunk))
@@ -223,6 +230,11 @@ bool Controller::hasInput(const string &raw)
 bool Controller::hasOutput(const string &raw)
 {
 	return raw.find(Controller::userOutputString) != string::npos;
+}
+
+bool Controller::hasAction(const string &raw)
+{
+	return raw.find(Controller::actionString) != string::npos;
 }
 
 Controller::~Controller()
