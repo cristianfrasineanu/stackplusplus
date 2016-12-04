@@ -40,7 +40,7 @@ void Console::showPrompt()
 void Console::loadActions()
 {
 	// TODO: load actions via config file
-	vector<char> actions = { 'q', 'b', 'n', 'y' };
+	vector<char> actions = { 'q', 'b', 'n' };
 
 	this->actions = actions;
 }
@@ -267,10 +267,6 @@ void Console::takeActionOrNext()
 			case 'n':
 				// TODO: implement pagination
 				break;
-			case 'y':
-				// TODO: Decouple this somehow
-				UserRepository::logOutUser();
-				this->renderNextView(string(Console::initialView));
 			default:
 				break;
 		}

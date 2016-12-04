@@ -4,20 +4,9 @@
 _\ \ || (_| | (__|   </ ___/| | |_| \__ \/ ___/| | |_| \__ \
 \__/\__\__,_|\___|_|\_\/    |_|\__,_|___/\/    |_|\__,_|___/
                                                             
-             |--------------------------|	   
-             |At least it's not COBOL...|
-             |--------------------------|
+~~~ Here are all your questions:
 
- ~~~ Make your choice:
-
- -1- Login
- -2- Sign-up
- -3- Browse Questions as Guest
- -4- FAQ
- -5- Help
-@action-user-reset
-
- *** Press -q- to quit or -b- to go to the previous menu. ***
+@output-user-questions
 
 ===========================================================
 # (c) 2016 Cristian-Adrian Frasineanu | GNU GPLv3 licence #

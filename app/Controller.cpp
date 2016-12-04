@@ -198,7 +198,7 @@ Controller::Controller(char *viewName, string &viewChunk, string &ViewExtension)
 	this->controllerAttributions = {};
 	this->userInputs = {};
 
-	(this->hasInput(viewChunk) || this->hasOutput(viewChunk)) ? this->prepareView() : this->justShow();
+	(this->hasInput(viewChunk) || this->hasOutput(viewChunk) || this->hasAction(viewChunk)) ? this->prepareView() : this->justShow();
 }
 
 vector<string>& Controller::getControllerAttributions()

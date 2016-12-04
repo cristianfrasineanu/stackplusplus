@@ -104,26 +104,26 @@ void UserRepository::receiveCleanInput(map<string, string> &cleanInput)
 // Determine what to output via the model.
 void UserRepository::echo(const string &alias)
 {
-	this->model.setActive();
+	this->model.setActiveIfAny();
 
 	if (alias == "fullname")
 	{
 		printString(this->model.getFullName());
 	}
+	else if (alias == "questions")
+	{
+
+	}
 }
 
-void UserRepository::logOutUser()
+void UserRepository::apply(const string &action)
 {
-	UserRepository users;
-
-	try
+	if (action == "reset")
 	{
-		User activeUser = users.model.setActive();
-		users.model.markAs(string("logged_out"), activeUser.id);
-	}
-	catch (const exception &e)
-	{
-		toast(string(e.what()), string("error"));
+		if (this->model.setActiveIfAny())
+		{
+			this->model.markAs(string("logged_out"));
+		}
 	}
 }
 

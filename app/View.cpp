@@ -73,7 +73,7 @@ void View::loadViewsOptions()
 
 		{ dashboardView, { { '1', findOrAskView }, { '4', logoutView } } },
 
-		{ logoutView, { { 'y', "" }, { 'b', "" } } },
+		{ logoutView, { { 'y', "home.view" }, { 'b', "" } } },
 
 		{ faqView, { { 'q', "" }, { 'b', "" } } },
 

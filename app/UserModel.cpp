@@ -5,6 +5,11 @@ char *UserModel::getFullName()
 	return this->user.full_name;
 }
 
+int UserModel::getId()
+{
+	return this->user.id;
+}
+
 User UserModel::setAfterUser(string &username)
 {
 	this->io.seekg(0, this->io.beg);
@@ -28,19 +33,23 @@ User UserModel::setAfterId(int id)
 	return this->user;
 }
 
-User UserModel::setActive()
+bool UserModel::setActiveIfAny()
 {
-	this->io.seekg(0, this->io.beg);
+	if (this->user.active == true)
+	{
+		return true;
+	}
 
+	this->io.seekg(0, this->io.beg);
 	while (this->io.read(reinterpret_cast<char *>(&this->user), sizeof(User)))
 	{
 		if (this->user.active == true)
 		{
-			return this->user;
+			return true;
 		}
 	}
 
-	throw exception("No active user!");
+	return false;
 }
 
 bool UserModel::userExists(string &username)
@@ -62,7 +71,10 @@ bool UserModel::userExists(string &username)
 
 void UserModel::markAs(const string &status, int id)
 {
-	this->setAfterId(id);
+	if (id != NULL)
+	{
+		this->setAfterId(id);
+	}
 
 	this->user.active = (status == "active") ? true : false;
 

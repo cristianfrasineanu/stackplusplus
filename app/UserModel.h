@@ -41,12 +41,13 @@ public:
 
 	User setAfterUser(string &);
 	User setAfterId(int);
-	User setActive();
+	bool setActiveIfAny();
 
 	char *getFullName();
+	int getId();
 
 	bool userExists(string &);
-	void markAs(const string &, int);
+	void markAs(const string &, int = NULL);
 	void save();
 	void setAttributes(map<string, string> &);
 

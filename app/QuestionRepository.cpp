@@ -117,13 +117,11 @@ void QuestionRepository::echo(const string &alias)
 
 void QuestionRepository::apply(const string &action)
 {
-	// Forget the active question when the action is triggered.
-	// TODO: The changes aren't persisted, why? (the question remains active forever)
 	if (action == "reset")
 	{
 		if (this->model.setActiveIfAny())
 		{
-			this->model.markAs("nonactive");
+			this->model.markAs("non_active");
 		}
 	}
 }
@@ -155,7 +153,8 @@ void QuestionRepository::validateItems(map<string, string> &truncatedInput)
 	{
 		if (truncatedInput.find("action")->second == "create")
 		{
-			truncatedInput["userId"] = to_string(this->users.setActive().id);
+			this->users.setActiveIfAny();
+			truncatedInput["userId"] = to_string(this->users.getId());
 		}
 		this->receiveCleanInput(truncatedInput);
 	}

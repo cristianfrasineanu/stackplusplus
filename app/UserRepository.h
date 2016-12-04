@@ -4,6 +4,7 @@
 
 #include "RepositoryInterface.h"
 #include "UserModel.h"
+#include "QuestionModel.h"
 
 using namespace std;
 
@@ -12,17 +13,18 @@ private:
 	static string alias;
 
 	UserModel model;
+	QuestionModel questions;
 
 	void defineValidation();
 	void receiveCleanInput(map<string, string> &);
 public:
 	static string &getAlias();
-	static void logOutUser();
 
 	UserRepository();
 
 	void validateItems(map<string, string> &);
 	void echo(const string &);
+	void apply(const string &);
 
 	~UserRepository();
 };
