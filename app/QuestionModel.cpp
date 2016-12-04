@@ -57,6 +57,22 @@ vector<Question> QuestionModel::retrieveAll()
 	return questions;
 }
 
+vector<Question> QuestionModel::retrieveForUserId(int userId)
+{
+	vector<Question> userQuestions;
+
+	this->io.seekg(0, this->io.beg);
+	while (this->io.read(reinterpret_cast<char *>(&this->question), sizeof(Question)))
+	{
+		if (this->question.user_id == userId)
+		{
+			userQuestions.push_back(this->question);
+		}
+	}
+
+	return userQuestions;
+}
+
 int QuestionModel::getId()
 {
 	return this->question.id;

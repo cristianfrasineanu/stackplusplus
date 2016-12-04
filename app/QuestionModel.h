@@ -44,6 +44,7 @@ public:
 	Question setAfterUserId(int);
 	Question setAfterId(int);
 	vector<Question> retrieveAll();
+	vector<Question> retrieveForUserId(int);
 
 	int getId();
 	char *getTitle();

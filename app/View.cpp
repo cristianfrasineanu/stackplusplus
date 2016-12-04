@@ -57,7 +57,8 @@ void View::loadViewsOptions()
 		findOrAskView = "find-or-ask.view",
 		createView = "create.view",
 		searchResultsView = "search-results.view",
-		showQuestionView = "show-question.view";
+		showQuestionView = "show-question.view",
+		userQuestionsView = "user-questions.view";
 
 	// Create non-linkable views, e.g. search results
 
@@ -71,7 +72,7 @@ void View::loadViewsOptions()
 
 		{ signupView, { { 'c', dashboardView } } },
 
-		{ dashboardView, { { '1', findOrAskView }, { '4', logoutView } } },
+		{ dashboardView, { { '1', findOrAskView }, { '2', userQuestionsView }, { '4', logoutView } } },
 
 		{ logoutView, { { 'y', "home.view" }, { 'b', "" } } },
 
@@ -85,7 +86,9 @@ void View::loadViewsOptions()
 
 		{ createView, { } },
 
-		{ showQuestionView, { { '1', dashboardView } } }
+		{ showQuestionView, { { '1', dashboardView } } },
+
+		{ userQuestionsView, { { 'b', "" } } }
 	};
 }
 

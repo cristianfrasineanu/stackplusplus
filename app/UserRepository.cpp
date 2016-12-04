@@ -112,7 +112,43 @@ void UserRepository::echo(const string &alias)
 	}
 	else if (alias == "questions")
 	{
+		this->model.setActiveIfAny();
 
+		vector<Question> userQuestions = this->questions.retrieveForUserId(this->model.getId());
+
+		if (!userQuestions.empty())
+		{
+			for (vector<Question>::iterator it = userQuestions.begin(); it != userQuestions.end(); it++)
+			{
+				printString((string("#") + string(to_string(it->id)) + string(" ")).c_str());
+				printString(it->title);
+				printString("\n");
+				printString("~~~~~~~~~~~~~");
+				printString("\n");
+				printString(it->body);
+				printString("\n");
+				printString("~~~~~~~~~~~~~");
+				printString("\n");
+				if (it->votes >= 0)
+				{
+					printString((string("+") + string(to_string(it->votes))).c_str());
+				}
+				else
+				{
+					printString(string(to_string(it->votes)).c_str());
+				}
+
+				// Make it look nice.
+				if (it != userQuestions.end() - 1)
+				{
+					printString("\n\n");
+				}
+			}
+		}
+		else
+		{
+			printString("Nothing to see here. Move on.");
+		}
 	}
 }
 
